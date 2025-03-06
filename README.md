@@ -1,1 +1,1 @@
-# SeaXChange-App
+# SeaXChange-Web
