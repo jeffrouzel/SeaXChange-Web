@@ -17,13 +17,7 @@ export default function CatchDetailsPage() {
     { label: "Consumer", value: "NA" },
   ];
 
-  const editableFields = [
-    "Species",
-    "Weight (kg)",
-    "Catch Location",
-    "Catch Date",
-    "Fishing Method",
-  ];
+  const editableFields = [];
 
   return (
     <div className="min-h-screen bg-white">
@@ -61,16 +55,7 @@ export default function CatchDetailsPage() {
           />
         </div>
 
-        <div className="mx-[150] h-16 bg-[#429FAD] flex items-center justify-evenly">
-          <div />
-          <Button>
-            <Link href="/auth/login">Save</Link>
-          </Button>
-          <Button variant="outline">
-            <Link href="/auth/signup">Send Tuna</Link>
-          </Button>
-          <div />
-        </div>
+        <div className="mx-[150] h-16 bg-[#429FAD] flex items-center justify-evenly"></div>
       </main>
     </div>
   );
