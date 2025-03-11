@@ -1,10 +1,19 @@
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Pencil, ArrowLeft, UserRound, LogOut } from "lucide-react";
+import SendCard from "@/components/ui/SendCard";
 
 export default function CatchDetails() {
+  const [isSendCardOpen, setIsSendCardOpen] = useState(false);
+
+  const handleOpenSendCard = () => setIsSendCardOpen(true);
+  const handleCloseSendCard = () => setIsSendCardOpen(false);
+
   return (
     <div className="min-h-screen bg-white">
       {/* SeaXChange Logo */}
@@ -76,12 +85,15 @@ export default function CatchDetails() {
           <Button>
             <Link href="/auth/login">Save</Link>
           </Button>
-          <Button variant="outline">
-            <Link href="/auth/signup">Send Tuna</Link>
+          <Button variant="outline" onClick={handleOpenSendCard}>
+            Send Tuna
           </Button>
           <div />
         </div>
       </main>
+
+      {/* Render SendCard modal */}
+      {isSendCardOpen && <SendCard onClose={handleCloseSendCard} />}
     </div>
   );
 }
