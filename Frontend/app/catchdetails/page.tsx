@@ -26,7 +26,7 @@ export default function CatchDetailsPage() {
     { label: "Consumer", value: "NA" },
   ];
 
-  const editableFields = [
+  const editableFields: string[] = [
     "Species",
     "Weight (kg)",
     "Catch Location",
