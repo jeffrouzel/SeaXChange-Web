@@ -31,16 +31,23 @@ export default function FisherHomepage() {
       <div className="flex justify-center my-6 gap-4">
         <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
         <Link href="/catchdetails">
-            <button className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
-                <Plus size={18} /> ADD CATCH
-            </button>
+          <button className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
+            <Plus size={18} /> ADD CATCH
+          </button>
         </Link>
       </div>
 
       {/* Tuna Grid */}
       <div className="grid grid-cols-3 gap-6">
         {filteredTunaData.map((tuna, index) => (
-          <TunaCard key={index} id={tuna.id} date={tuna.date} status={tuna.status} />
+          <Link href="/viewdetails">
+            <TunaCard
+              key={index}
+              id={tuna.id}
+              date={tuna.date}
+              status={tuna.status}
+            />
+          </Link>
         ))}
       </div>
     </div>
