@@ -21,6 +21,17 @@ export default function Signup() {
           SeaXChange
         </h1>
         <form className="w-full max-w-sm">
+        <div className="mb-4">
+            <Label htmlFor="name" className="text-teal-800 text-sm">
+              Name
+            </Label>
+            <Input
+              type="name"
+              id="name"
+              placeholder="Enter your name"
+              className="w-full h-16"
+            />
+          </div>
           <div className="mb-4">
             <Label htmlFor="email" className="text-teal-800 text-sm">
               Email
