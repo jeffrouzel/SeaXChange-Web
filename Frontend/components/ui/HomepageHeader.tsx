@@ -1,5 +1,7 @@
 // "use client";
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut } from "lucide-react";
+import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import ProfileContent from "@/components/ProfileContent";
 
 interface HomepageHeaderProps {
   title: string;
@@ -13,9 +15,16 @@ const HomepageHeader: React.FC<HomepageHeaderProps> = ({ title }) => {
         {title}
       </h1>
       <div className="flex gap-4">
-        <button className="flex items-center gap-2 text-gray-700 hover:text-teal-700">
-          <User size={18} /> Profile
-        </button>
+        {/* Show Profile Information POPOVER */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="flex items-center gap-2 text-gray-700 hover:text-teal-700">
+              <User size={18} /> Profile
+            </button>
+          </PopoverTrigger>
+          <ProfileContent />
+        </Popover>
+        {/* Sign Out Button */}
         <button className="flex items-center gap-2 text-gray-700 hover:text-red-600">
           <LogOut size={18} /> Sign Out
         </button>
