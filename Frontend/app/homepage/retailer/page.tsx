@@ -3,11 +3,11 @@
 import HomepageHeader from "@/components/ui/HomepageHeader";
 import SearchBar from "@/components/ui/SearchBar";
 import TunaCard from "@/components/ui/TunaCard";
-import { Plus } from "lucide-react";
+import { Filter } from "lucide-react"; // Import Filter icon
 import { useState } from "react";
 import Link from "next/link";
 
-export default function FisherHomepage() {
+export default function RetailerHomepage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const tunaData = [
@@ -25,27 +25,21 @@ export default function FisherHomepage() {
   return (
     <div className="min-h-screen bg-[#429FAD] p-6">
       {/* Header */}
-      <HomepageHeader title="Fisher's Homepage" />
+      <HomepageHeader title="Retailer's Homepage" />
 
-      {/* Search and Add */}
+      {/* Search and Filter */}
       <div className="flex justify-center my-6 gap-4">
         <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
-        <Link href="/catchdetails">
-          <button className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
-            <Plus size={18} /> ADD CATCH
-          </button>
-        </Link>
+        <button className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
+          <Filter size={18} /> Filter
+        </button>
       </div>
 
       {/* Tuna Grid */}
       <div className="grid grid-cols-3 gap-6">
         {filteredTunaData.map((tuna) => (
           <Link href="/viewdetails" key={tuna.id}>
-            <TunaCard
-              id={tuna.id}
-              date={tuna.date}
-              status={tuna.status}
-            />
+            <TunaCard id={tuna.id} date={tuna.date} status={tuna.status} />
           </Link>
         ))}
       </div>

@@ -1,10 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 
+type AssetDetail = {
+  label: string;
+  value: string;
+};
+
+type CatchDetailsTableProps = {
+  assetDetails: AssetDetail[];
+  editableFields?: string[];
+};
+
 export default function CatchDetailsTable({
   assetDetails,
   editableFields = [],
-}) {
+}: CatchDetailsTableProps) {
   return (
     <div className="bg-white shadow-lg">
       {assetDetails.map((item, index) => (

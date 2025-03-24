@@ -1,4 +1,3 @@
-// "use client";
 import { User, LogOut } from "lucide-react";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import ProfileContent from "@/components/ProfileContent";

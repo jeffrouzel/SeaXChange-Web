@@ -1,15 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export default function SignupRoles() {
   const router = useRouter();
+  const [userType, setUserType] = useState(""); // store selected value
 
   const handleSubmit = () => {
-    router.push("/homepage/fisher"); // Ensure the correct route exists in your Next.js pages
+    if (userType) {
+      router.push(`/homepage/${userType}`); // Navigate based on user type
+    }
   };
 
   return (
@@ -28,8 +31,10 @@ export default function SignupRoles() {
           <select
             id="userType"
             className="w-full h-16 border border-gray-300 rounded px-4"
+            value={userType} // Use value instead of selected
+            onChange={(e) => setUserType(e.target.value)} // Update state on change
           >
-            <option value="" disabled selected hidden>
+            <option value="" disabled hidden>
               Select User Type
             </option>
             <option value="fisher">Fisher</option>
@@ -38,7 +43,11 @@ export default function SignupRoles() {
             <option value="consumer">Consumer</option>
           </select>
         </div>
-        <Button className="w-lg bg-teal-800 hover:bg-teal-900" onClick={handleSubmit}>
+        <Button
+          className="w-lg bg-teal-800 hover:bg-teal-900"
+          onClick={handleSubmit}
+          disabled={!userType} // Disable button if no selection
+        >
           Submit
         </Button>
       </div>
