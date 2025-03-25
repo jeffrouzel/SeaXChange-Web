@@ -6,12 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Pencil, ArrowLeft, UserRound, LogOut } from "lucide-react";
 import SendCard from "@/components/ui/SendCard";
 import CatchDetailsTable from "@/components/CatchTable";
+import SaveAlert from "@/components/SaveAlert";
+import SendAlert from "@/components/SendAlert";
 
 export default function CatchDetailsPage() {
   const [isSendCardOpen, setIsSendCardOpen] = useState(false);
 
   const handleOpenSendCard = () => setIsSendCardOpen(true);
   const handleCloseSendCard = () => setIsSendCardOpen(false);
+
+  // Save details state
+  const [isDetailsSaved, setIsDetailsSaved] = useState(false);
+  const handleSaveDetails = () => setIsDetailsSaved(true);
 
   const assetName = "TUNA1";
   const assetDetails = [
@@ -33,7 +39,7 @@ export default function CatchDetailsPage() {
     "Catch Date",
     "Fishing Method",
   ];
-  
+
   return (
     <div className="min-h-screen bg-white">
       <header className="flex justify-between items-center p-4 border-b">
@@ -72,12 +78,16 @@ export default function CatchDetailsPage() {
 
         <div className="mx-[150] h-16 bg-[#429FAD] flex items-center justify-evenly">
           <div />
-          <Button>
-            <Link href="/auth/login">Save</Link>
-          </Button>
-          <Button variant="outline" onClick={handleOpenSendCard}>
-            Send Tuna
-          </Button>
+          {/* Save Button */}
+          {!isDetailsSaved ? <SaveAlert onSave={handleSaveDetails} /> : null}
+          {/* If changes aren't saved, show SendAlert */}
+          {!isDetailsSaved ? <SendAlert /> : null}
+          {/* If details are saved, show the send card  */}
+          {isDetailsSaved && (
+            <Button variant="outline" onClick={handleOpenSendCard}>
+              Send Tuna
+            </Button>
+          )}
           <div />
         </div>
       </main>
