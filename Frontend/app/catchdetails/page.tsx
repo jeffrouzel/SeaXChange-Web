@@ -8,6 +8,8 @@ import SendCard from "@/components/ui/SendCard";
 import CatchDetailsTable from "@/components/CatchTable";
 import SaveAlert from "@/components/SaveAlert";
 import SendAlert from "@/components/SendAlert";
+import HomepageHeader from "@/components/ui/HomepageHeader";
+
 
 export default function CatchDetailsPage() {
   const [isSendCardOpen, setIsSendCardOpen] = useState(false);
@@ -42,22 +44,8 @@ export default function CatchDetailsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-teal-800 font-bold text-lg ml-[150]">SeaXChange</h1>
-        <div className="space-x-2 mr-[150] flex justify-center">
-          <Button
-            variant="outline"
-            className="flex flex-col items-center gap-0"
-          >
-            <UserRound className="w-5 h-5" />
-            <Link href="/auth/login">Profile</Link>
-          </Button>
-          <Button className="flex flex-col items-center text-center gap-0">
-            <LogOut className="w-5 h-5" />
-            <Link href="/auth/signup">Sign out</Link>
-          </Button>
-        </div>
-      </header>
+      {/* Header */}
+      <HomepageHeader />
       <main className="min-h-[70vh] bg-[#429FAD]">
         <div className="w-full h-25 bg-[#429FAD] flex items-center justify-between px-8 pt-[40]">
           <Button variant={"ghost"} size="icon">
