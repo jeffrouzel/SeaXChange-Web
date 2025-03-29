@@ -38,7 +38,7 @@ export default function SupplierHomepage() {
       {/* Tuna Grid */}
       <div className="grid grid-cols-3 gap-6">
         {filteredTunaData.map((tuna) => (
-          <Link href="/viewdetails" key={tuna.id}>
+          <Link href="/catchdetails" key={tuna.id}>
             <TunaCard id={tuna.id} date={tuna.date} status={tuna.status} />
           </Link>
         ))}
