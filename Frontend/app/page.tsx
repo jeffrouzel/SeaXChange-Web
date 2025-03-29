@@ -7,7 +7,10 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* SeaXChange Logo */}
       <header className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-teal-800 font-bold text-lg">SeaXChange</h1>
+        <h1 className="text-teal-800 font-bold text-lg flex items-center">
+          <img src="/tuna-logo.png" alt="SeaXChange" className="h-8 mr-2" />
+          SeaXChange
+        </h1>
         {/* Login and Register */}
         <div className="space-x-2">
           <Button variant="outline">
