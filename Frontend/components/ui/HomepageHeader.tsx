@@ -1,12 +1,22 @@
+"use client";
 import { User, LogOut } from "lucide-react";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import ProfileContent from "@/components/ProfileContent";
+
+import { useRouter } from 'next/navigation';
 
 interface HomepageHeaderProps {
   title: string;
 }
 
 const HomepageHeader: React.FC<HomepageHeaderProps> = ({ title }) => {
+  const router = useRouter();
+
+  // Log Out
+  const handleSignOut = () => {
+    router.push("/auth/login");
+  };
+
   return (
     <header className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
       <h1 className="text-xl font-bold text-teal-700 flex items-center">
@@ -24,7 +34,9 @@ const HomepageHeader: React.FC<HomepageHeaderProps> = ({ title }) => {
           <ProfileContent />
         </Popover>
         {/* Sign Out Button */}
-        <button className="flex items-center gap-2 text-gray-700 hover:text-red-600">
+        <button 
+          className="flex items-center gap-2 text-gray-700 hover:text-red-600"
+          onClick={handleSignOut}>
           <LogOut size={18} /> Sign Out
         </button>
       </div>
