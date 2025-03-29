@@ -72,7 +72,7 @@ export default function CatchDetailsPage() {
         <div className="mx-[150] my-[40]">
           <CatchDetailsTable
             assetDetails={assetDetails}
-            editableFields={editableFields}
+            editableFields={isDetailsSaved ? [] : editableFields} // Disable editing when saved
           />
         </div>
 
