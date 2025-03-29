@@ -27,7 +27,7 @@ export default function Home() {
           </p>
         </div>
         <div className="bg-teal-800 flex justify-center items-center text-white">
-          Picture
+          <img src="/tuna-background.jpg" alt="tuna" className="w-full h-full object-cover" />       
         </div>
       </main>
 

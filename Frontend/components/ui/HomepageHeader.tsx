@@ -20,8 +20,8 @@ const HomepageHeader: React.FC<HomepageHeaderProps> = ({ title }) => {
   return (
     <header className="flex justify-between items-center bg-white p-4 rounded-lg shadow-md">
       <h1 className="text-xl font-bold text-teal-700 flex items-center">
-        <img src="/seaxchange-logo.png" alt="SeaXChange" className="h-8 mr-2" />
-        {title}
+        <img src="/tuna-logo.png" alt="SeaXChange" className="h-8 mr-2" /> 
+        SeaXChange <span className="ml-2">{title}</span>
       </h1>
       <div className="flex gap-4">
         {/* Show Profile Information POPOVER */}
