@@ -10,10 +10,10 @@ export default function ConsumerHomepage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const tunaData = [
-    { id: "TUNA1", date: "Dec 1, 2024", status: "Available" },
-    { id: "TUNA2", date: "Dec 2, 2024", status: "Sold" },
-    { id: "TUNA3", date: "Dec 3, 2024", status: "Available" },
-    { id: "TUNA4", date: "Dec 4, 2024", status: "Available" },
+    { id: "tuna1", date: "Dec 1, 2024", status: "Available" },
+    { id: "tuna2", date: "Dec 2, 2024", status: "Sold" },
+    { id: "tuna3", date: "Dec 3, 2024", status: "Available" },
+    { id: "tuna4", date: "Dec 4, 2024", status: "Available" },
   ];
 
   // Filter tuna data based on search query
