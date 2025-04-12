@@ -1,33 +1,71 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import HomepageHeader from "@/components/ui/HomepageHeader";
 import SearchBar from "@/components/ui/SearchBar";
 import TunaCard from "@/components/ui/TunaCard";
 import { Plus } from "lucide-react";
-import { useState } from "react";
 import Link from "next/link";
+import { fetchAssets } from "@/lib/api";
+
+interface TunaAsset {
+  ID: string;
+  Species: string;
+  CatchDate: string;
+  // Weight: number;
+  CatchLocation: string;
+  Fisher: string;
+}
 
 export default function FisherHomepage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [tunaData, setTunaData] = useState<TunaAsset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const tunaData = [
-    { id: "TUNA1", date: "Dec 1, 2024", status: "Available" },
-    { id: "TUNA2", date: "Dec 2, 2024", status: "Sold" },
-    { id: "TUNA3", date: "Dec 3, 2024", status: "Available" },
-    { id: "TUNA4", date: "Dec 4, 2024", status: "Available" },
-  ];
+  useEffect(() => {
+    const loadTunaData = async () => {
+      try {
+        const data = await fetchAssets();
+        // Filter assets for the current fisher (you might want to adjust this logic) 
+        const filteredData = data.filter((tuna : TunaAsset) => !tuna.ID.startsWith('asset1743231585365')); // remove id created by app gateway
+        setTunaData(filteredData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch tuna data');
+        console.error('Error fetching tuna data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTunaData();
+  }, []);
 
   // Filter tuna data based on search query
   const filteredTunaData = tunaData.filter((tuna) =>
-    tuna.id.toLowerCase().includes(searchQuery.toLowerCase())
+    tuna.ID.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#429FAD] p-6 flex items-center justify-center">
+        <p className="text-white text-lg">Loading tuna data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#429FAD] p-6 flex items-center justify-center">
+        <p className="text-white text-lg">Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#429FAD] p-6">
-      {/* Header */}
       <HomepageHeader title="Fisher's Homepage" />
 
-      {/* Search and Add */}
       <div className="flex justify-center my-6 gap-4">
         <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
         <Link href="/catchdetails">
@@ -37,11 +75,16 @@ export default function FisherHomepage() {
         </Link>
       </div>
 
-      {/* Tuna Grid */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTunaData.map((tuna) => (
-          <Link href="/viewzdetails" key={tuna.id}>
-            <TunaCard id={tuna.id} date={tuna.date} status={tuna.status} />
+          <Link href={`/catchdetails/${tuna.ID}`} key={tuna.ID}>
+            <TunaCard
+              id={tuna.ID}
+              date={new Date(tuna.CatchDate).toLocaleDateString()}
+              species={tuna.Species}
+              location={tuna.CatchLocation}
+              // weight={tuna.Weight}
+            />
           </Link>
         ))}
       </div>
