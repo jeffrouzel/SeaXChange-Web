@@ -3,10 +3,10 @@ interface TunaCardProps {
   date: string;
   species: string;
   location: string;
-  weight: number;
+  // weight: number;
 }
 
-export default function TunaCard({ id, date, species, location, weight }: TunaCardProps) {
+export default function TunaCard({ id, date, species, location }: TunaCardProps) {
   return (
     <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg text-center transition-all cursor-pointer">
       <div className="h-40 bg-gray-300 flex items-center justify-center">Picture</div>

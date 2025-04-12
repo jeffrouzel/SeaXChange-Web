@@ -25,7 +25,8 @@ export default function ConsumerHomepage() {
     const loadTunaData = async () => {
       try {
         const data = await fetchAssets();
-        setTunaData(data);
+        const filteredData = data.filter((tuna : TunaAsset) => !tuna.ID.startsWith('asset')); // remove id created by app gateway
+        setTunaData(filteredData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch tuna data');
         console.error('Error fetching tuna data:', err);
@@ -74,7 +75,7 @@ export default function ConsumerHomepage() {
               date={new Date(tuna.CatchDate).toLocaleDateString()}
               species={tuna.Species}
               location={tuna.CatchLocation}
-              weight={tuna.Weight}
+              // weight={tuna.Weight}
             />
           </Link>
         ))}
