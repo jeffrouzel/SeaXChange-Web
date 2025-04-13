@@ -5,13 +5,94 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import WarningAlert from "@/components/WarningAlert";
+import { useState } from "react";
+
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "@/firebase.config";
 
 export default function Signup() {
   const router = useRouter();
 
-  const handleSignUp = () => {
-    router.push("/auth/signup-roles");
-  }
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const verifySignUp = () => {
+    if (!name || !email || !password || !confirmPassword) {
+      setError("Please fill in all fields!");
+      setOpen(true);
+      return false;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match!");
+      setOpen(true);
+      return false;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long!");
+      setOpen(true);
+      return false;
+    }
+    if (!/(?=.*\d)/.test(password)) {
+      setError("Password should contain atleast 1 number.");
+      setOpen(true);
+      return false;
+    }
+    if (!/(?=.*[a-z])/.test(password)) {
+      setError("Password should contain atleast 1 lowercase letter.");
+      setOpen(true);
+      return false;
+    }
+    if (!/(?=.*[A-Z])/.test(password)) {
+      setError("Password should contain atleast 1 uppercase letter.");
+      setOpen(true);
+      return false;
+    }
+    if (!/(?=.*[!@#$%^&*])/.test(password)) {
+      setError("Password should contain atleast 1 special character.");
+      setOpen(true);
+      return false;
+    }
+    setError(null); // Clear error if everything is fine
+    return true;
+  };
+
+  const handleSignUp = async () => {
+    try {
+      if (!verifySignUp()) return; // Verify signup details before proceeding
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const userDoc: {
+        userId: string;
+        name: string;
+        email: string;
+        password: string;
+        userType: string;
+      } = {
+        userId: response.user.uid,
+        name: name,
+        email: email,
+        password: password,
+        userType: "",
+      };
+
+      await setDoc(doc(db, "users", response.user.uid), userDoc);
+
+      router.push("/auth/signup-roles"); // Redirect after successful signup
+    } catch (err: any) {
+      console.error(err.message);
+      setError(err.message);
+    }
+  };
   return (
     <div className="flex h-screen">
       {/* Left Side (Form) */}
@@ -22,7 +103,7 @@ export default function Signup() {
           SeaXChange
         </h1>
         <form className="w-full max-w-sm">
-        <div className="mb-4">
+          <div className="mb-4">
             <Label htmlFor="name" className="text-teal-800 text-sm">
               Name
             </Label>
@@ -31,6 +112,8 @@ export default function Signup() {
               id="name"
               placeholder="Enter your name"
               className="w-full h-16"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="mb-4">
@@ -42,6 +125,8 @@ export default function Signup() {
               id="email"
               placeholder="Enter your email"
               className="w-full h-16"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-4">
@@ -53,12 +138,31 @@ export default function Signup() {
               id="password"
               placeholder="Enter your password"
               className="w-full h-16"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          <div className="mb-4">
+            <Label htmlFor="password" className="text-teal-800 text-sm">
+              Confirm Password
+            </Label>
+            <Input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              className="w-full h-16"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+
+          {error && (
+            <WarningAlert message={error} open={open} onOpenChange={setOpen} />
+          )}
           {/* <Button className="w-full bg-teal-800 hover:bg-teal-900 mt-4">
             Sign Up
           </Button> */}
-          <Button 
+          <Button
             type="button"
             onClick={handleSignUp}
             className="w-full bg-teal-800 hover:bg-teal-900 mt-4"
@@ -81,7 +185,11 @@ export default function Signup() {
       </div>
       {/* Right Side (Image/Graphic) */}
       <div className="w-1/2 bg-teal-800 flex flex-col justify-center items-center text-white">
-        <img src="/tuna-background.jpg" alt="tuna" className="w-full h-full object-cover" />
+        <img
+          src="/tuna-background.jpg"
+          alt="tuna"
+          className="w-full h-full object-cover"
+        />
       </div>
     </div>
   );
