@@ -1,17 +1,55 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+
+import { auth, db } from "@/firebase.config";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 
 export default function SignupRoles() {
   const router = useRouter();
   const [userType, setUserType] = useState(""); // store selected value
 
-  const handleSubmit = () => {
-    if (userType) {
-      router.push(`/homepage/${userType}`); // Navigate based on user type
+  useEffect(() => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      // Redirect to login page if no user is signed in
+      router.push("/auth/login");
+    }
+  }, [router]);
+
+  const handleSubmit = async () => {
+    if (!userType) {
+      alert("Please select a user type!");
+      return;
+    }
+
+    try {
+      const currentUser = auth.currentUser; // Get the current user
+      if (!currentUser) {
+        throw new Error("No user is currently signed in.");
+      }
+      const userRef = doc(db, "users", currentUser.uid); // Reference to the user's document in Firestore
+      const userDoc = await getDoc(userRef); // Check if the document exists
+
+      if (!userDoc.exists()) {
+        // If document doesn't exist, create it
+        await setDoc(userRef, {
+          userId: currentUser.uid,
+          name: currentUser.displayName || "Unnamed",
+          email: currentUser.email,
+          userType: userType,
+        });
+      } else {
+        // If the document exists, update the userType
+        await updateDoc(userRef, { userType: userType });
+      }
+      router.push(`/homepage/${userType}`); // Redirect to the homepage based on user type
+    } catch (error) {
+      console.error("Error updating user type:", error);
+      alert("An error occurred while updating user type. Please try again.");
     }
   };
 
@@ -54,7 +92,11 @@ export default function SignupRoles() {
       </div>
       {/* Right Side (Image/Graphic) */}
       <div className="w-1/2 bg-teal-800 flex flex-col justify-center items-center text-white">
-        <img src="/tuna-background.jpg" alt="tuna" className="w-full h-full object-cover" />
+        <img
+          src="/tuna-background.jpg"
+          alt="tuna"
+          className="w-full h-full object-cover"
+        />
       </div>
     </div>
   );
