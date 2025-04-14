@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import WarningAlert from "@/components/WarningAlert";
+
 import { useState } from "react";
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
