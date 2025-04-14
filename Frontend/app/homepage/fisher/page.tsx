@@ -27,12 +27,16 @@ export default function FisherHomepage() {
     const loadTunaData = async () => {
       try {
         const data = await fetchAssets();
-        // Filter assets for the current fisher (you might want to adjust this logic) 
-        const filteredData = data.filter((tuna : TunaAsset) => !tuna.ID.startsWith('asset1743231585365')); // remove id created by app gateway
+        // Filter assets for the current fisher (you might want to adjust this logic)
+        const filteredData = data.filter(
+          (tuna: TunaAsset) => !tuna.ID.startsWith("asset1743231585365")
+        ); // remove id created by app gateway
         setTunaData(filteredData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch tuna data');
-        console.error('Error fetching tuna data:', err);
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch tuna data"
+        );
+        console.error("Error fetching tuna data:", err);
       } finally {
         setLoading(false);
       }
@@ -68,7 +72,7 @@ export default function FisherHomepage() {
 
       <div className="flex justify-center my-6 gap-4">
         <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
-        <Link href="/catchdetails">
+        <Link href="/addcatch">
           <button className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
             <Plus size={18} /> ADD CATCH
           </button>

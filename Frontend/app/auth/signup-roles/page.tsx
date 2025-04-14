@@ -47,8 +47,8 @@ export default function SignupRoles() {
         await updateDoc(userRef, { userType: userType });
       }
       router.push(`/homepage/${userType}`); // Redirect to the homepage based on user type
-    } catch (error) {
-      console.error("Error updating user type:", error);
+    } catch (err: any) {
+      console.error(err.message);
       alert("An error occurred while updating user type. Please try again.");
     }
   };

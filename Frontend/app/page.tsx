@@ -1,40 +1,37 @@
-"use client";
-
-import HomepageHeader from "@/components/ui/HomepageHeader";
-import SearchBar from "@/components/ui/SearchBar";
-import TunaCard from "@/components/ui/TunaCard";
-import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-export default function ConsumerHomepage() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const tunaData = [
-    { id: "tuna1", date: "Dec 1, 2024", status: "Available" },
-    { id: "tuna2", date: "Dec 2, 2024", status: "Sold" },
-    { id: "tuna3", date: "Dec 3, 2024", status: "Available" },
-    { id: "tuna4", date: "Dec 4, 2024", status: "Available" },
-  ];
-
-  const filteredTunaData = tunaData.filter((tuna) =>
-    tuna.id.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
+export default function Home() {
   return (
-    <div className="min-h-screen bg-[#429FAD] p-6">
-      <HomepageHeader title="Consumer's Homepage" />
+    <div className="min-h-screen bg-white">
+      {/* SeaXChange Logo */}
+      <header className="flex justify-between items-center p-4 border-b">
+        <h1 className="text-teal-800 font-bold text-lg">SeaXChange</h1>
+        {/* Login and Register */}
+        <div className="space-x-2">
+          <Button variant="outline">
+            <Link href="/auth/login">Login</Link>
+          </Button>
+          <Button>
+            <Link href="/auth/signup">Getting Started</Link>
+          </Button>
+        </div>
+      </header>
 
-      <div className="flex justify-center my-6 gap-4">
-        <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
-      </div>
+      <main className="grid grid-cols-2 min-h-[70vh]">
+        <div className="bg-gray-200 flex justify-center items-center text-center p-6">
+          <p className="text-lg font-mono">
+            “Discover the Journey your tuna made from the ocean to your dinner
+            plate”
+          </p>
+        </div>
+        <div className="bg-teal-800 flex justify-center items-center text-white">
+          Picture
+        </div>
+      </main>
 
-      <div className="grid grid-cols-3 gap-6">
-        {filteredTunaData.map((tuna) => (
-          <Link href={`/viewdetails/${tuna.id}`} key={tuna.id}>
-            <TunaCard id={tuna.id} date={tuna.date} status={tuna.status} />
-          </Link>
-        ))}
-      </div>
+      <footer className="text-center py-6 text-teal-800">Some Footer</footer>
     </div>
   );
 }

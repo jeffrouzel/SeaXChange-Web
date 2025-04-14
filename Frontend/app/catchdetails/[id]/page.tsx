@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Pencil, ArrowLeft } from "lucide-react";
 import SendCard from "@/components/ui/SendCard";
@@ -11,6 +11,11 @@ import SendAlert from "@/components/SendAlert";
 import HomepageHeader from "@/components/ui/HomepageHeader";
 import { fetchAssetById, type AssetDetails } from "@/lib/api";
 
+import { getEditableFieldsForRole } from "@/lib/editableFieldsByRole";
+import { getAuth } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase.config";
+
 export default function CatchDetailsPage() {
   const router = useRouter();
   const params = useParams();
@@ -18,7 +23,9 @@ export default function CatchDetailsPage() {
 
   const [assetDetails, setAssetDetails] = useState<AssetDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<{message: string; details?: any} | null>(null);
+  const [error, setError] = useState<{ message: string; details?: any } | null>(
+    null
+  );
   const [isSendCardOpen, setIsSendCardOpen] = useState(false);
   const [isDetailsSaved, setIsDetailsSaved] = useState(false);
 
@@ -30,16 +37,34 @@ export default function CatchDetailsPage() {
   const handleCloseSendCard = () => setIsSendCardOpen(false);
   const handleSaveDetails = () => setIsDetailsSaved(true);
 
+  const [editableFields, setEditableFields] = useState<string[]>([]);
+
   useEffect(() => {
     const loadAssetDetails = async () => {
       try {
         const data = await fetchAssetById(assetId);
         setAssetDetails(data);
+
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+
+        if (currentUser) {
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          const role = userDoc.exists() ? userDoc.data().userType : null;
+
+          if (role) {
+            const allowedFields = getEditableFieldsForRole(role);
+            setEditableFields(allowedFields);
+          }
+        }
         setError(null);
       } catch (err) {
         setError({
-          message: err instanceof Error ? err.message : 'Failed to fetch asset details',
-          details: err
+          message:
+            err instanceof Error
+              ? err.message
+              : "Failed to fetch asset details",
+          details: err,
         });
         setAssetDetails(null);
       } finally {
@@ -51,17 +76,19 @@ export default function CatchDetailsPage() {
   }, [assetId]);
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <p className="text-lg">Loading asset details...</p>
-    </div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-lg">Loading asset details...</p>
+      </div>
+    );
   }
 
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <p className="text-red-500 font-bold mb-2">Error: {error.message}</p>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="mt-4"
           onClick={() => window.location.reload()}
         >
@@ -71,25 +98,19 @@ export default function CatchDetailsPage() {
     );
   }
 
-  const editableFields: string[] = [
-    "Species",
-    // "Weight",
-    "CatchLocation",
-    "CatchDate",
-    "FishingMethod",
-  ];
-
-  const formattedDetails = assetDetails ? [
-    { label: "Species", value: assetDetails.Species },
-    // { label: "Weight (kg)", value: assetDetails.Weight.toString() },
-    { label: "Catch Location", value: assetDetails.CatchLocation },
-    { label: "Catch Date", value: assetDetails.CatchDate },
-    { label: "Fishing Method", value: assetDetails.FishingMethod },
-    { label: "Fisher", value: assetDetails.Fisher },
-    { label: "Supplier", value: assetDetails.Supplier || "NA" },
-    { label: "Retailer", value: assetDetails.Retailers.join(", ") || "NA" },
-    { label: "Consumer", value: assetDetails.Consumers.join(", ") || "NA" },
-  ] : [];
+  const formattedDetails = assetDetails
+    ? [
+        { label: "Species", value: assetDetails.Species },
+        // { label: "Weight (kg)", value: assetDetails.Weight.toString() },
+        { label: "Catch Location", value: assetDetails.CatchLocation },
+        { label: "Catch Date", value: assetDetails.CatchDate },
+        { label: "Fishing Method", value: assetDetails.FishingMethod },
+        { label: "Fisher", value: assetDetails.Fisher },
+        { label: "Supplier", value: assetDetails.Supplier || "NA" },
+        { label: "Retailer", value: assetDetails.Retailers.join(", ") || "NA" },
+        { label: "Consumer", value: assetDetails.Consumers.join(", ") || "NA" },
+      ]
+    : [];
 
   return (
     <div className="min-h-screen bg-white">
