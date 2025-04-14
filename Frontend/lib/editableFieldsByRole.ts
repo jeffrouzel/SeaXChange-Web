@@ -1,5 +1,6 @@
 export const editableFieldsByRole: Record<string, string[]> = {
     fisher: [
+      "ID",
       "Species",
       "Catch Location",
       "Catch Date",

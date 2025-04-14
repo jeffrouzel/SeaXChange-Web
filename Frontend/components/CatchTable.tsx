@@ -12,18 +12,21 @@ type AssetDetail = {
 type CatchDetailsTableProps = {
   assetDetails: AssetDetail[];
   editableFields?: string[];
+  onChange?: (updates: Record<string, string>) => void;
 };
 
 export default function CatchDetailsTable({
   assetDetails,
   editableFields = [],
+  onChange
 }: CatchDetailsTableProps) {
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editedValues, setEditedValues] = useState<{ [key: string]: string }>(
     Object.fromEntries(assetDetails.map((item) => [item.label, item.value]))
   );
+
   const handleEditClick = (label: string) => {
-    if (!editableFields.includes(label)) return; // Prevent editing if not allowed
+    if (!editableFields.includes(label)) return;
     setEditingField(label);
   };
 
@@ -34,12 +37,29 @@ export default function CatchDetailsTable({
       /[^a-zA-Z\s]/.test(newValue)
     )
       return;
+    
     setEditedValues((prev) => ({ ...prev, [label]: newValue }));
+    
+    // Map the label back to the asset property name
+    const propertyMap: { [key: string]: string } = {
+      "ID": "ID",
+      "Species": "Species",
+      "Catch Location": "CatchLocation",
+      "Catch Date": "CatchDate",
+      "Fishing Method": "FishingMethod",
+      "Fisher": "Fisher"
+    };
+
+    // Notify parent component of changes
+    if (onChange && propertyMap[label]) {
+      onChange({ [propertyMap[label]]: newValue });
+    }
   };
 
   const handleSave = () => {
     setEditingField(null);
   };
+
   return (
     <div className="bg-white shadow-lg">
       {assetDetails.map((item, index) => (
@@ -54,9 +74,7 @@ export default function CatchDetailsTable({
                 <input
                   type="date"
                   value={editedValues[item.label]}
-                  onChange={(e) =>
-                    handleInputChange(item.label, e.target.value)
-                  }
+                  onChange={(e) => handleInputChange(item.label, e.target.value)}
                   onBlur={handleSave}
                   className="border p-1 rounded"
                 />
@@ -64,9 +82,7 @@ export default function CatchDetailsTable({
                 <input
                   type="text"
                   value={editedValues[item.label]}
-                  onChange={(e) =>
-                    handleInputChange(item.label, e.target.value)
-                  }
+                  onChange={(e) => handleInputChange(item.label, e.target.value)}
                   onBlur={handleSave}
                   onKeyDown={(e) => e.key === "Enter" && handleSave()}
                   autoFocus
@@ -79,7 +95,7 @@ export default function CatchDetailsTable({
 
             {editableFields.includes(item.label) && (
               <Button
-                variant={"ghost"}
+                variant="ghost"
                 size="icon"
                 onClick={() =>
                   editingField === item.label

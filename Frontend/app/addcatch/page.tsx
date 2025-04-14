@@ -27,12 +27,12 @@ export default function NewCatchPage() {
 
   // New blank asset state
   const [newAsset, setNewAsset] = useState({
-    ID: "TBD",
+    ID: "Enter ID",
     Species: "Set Species",
     CatchLocation: "Set Catch Location",
     CatchDate: "Set Catch Date",
     FishingMethod: "Set Fishing Method",
-    Fisher: "Set Name",
+    Fisher: "Enter Fisher",
     Supplier: "",
     Retailers: [],
     Consumers: [],
@@ -55,7 +55,28 @@ export default function NewCatchPage() {
     getRoleEditableFields();
   }, []);
 
+  useEffect(() => {
+    const setFisherDetails = async () => {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const fisherFormat = `${userData.customId}:${userData.name}`;
+          setNewAsset(prev => ({
+            ...prev,
+            Fisher: fisherFormat
+          }));
+        }
+      }
+    };
+
+    setFisherDetails();
+  }, []);
+
   const formattedDetails = [
+    { label: "ID", value: newAsset.ID },
     { label: "Species", value: newAsset.Species },
     { label: "Catch Location", value: newAsset.CatchLocation },
     { label: "Catch Date", value: newAsset.CatchDate },
@@ -95,8 +116,6 @@ export default function NewCatchPage() {
           {!isDetailsSaved ? (
             <SaveAlert
               onSave={handleSaveDetails}
-              isNewAsset
-              newAsset={newAsset}
             />
           ) : null}
           {!isDetailsSaved ? <SendAlert /> : null}
