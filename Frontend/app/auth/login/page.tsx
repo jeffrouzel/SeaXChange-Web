@@ -58,7 +58,13 @@ export default function Login() {
           SeaXChange
         </h1>
         {/* Input Login Details */}
-        <form className="w-full max-w-sm justify-center items-center mx-auto my-auto">
+        <form
+          className="w-full max-w-sm justify-center items-center mx-auto my-auto"
+          onSubmit={(e) => {
+            e.preventDefault(); // prevents page reload
+            handleLogin();
+          }}
+        >
           <div className="mb-4">
             <Label htmlFor="email" className="text-teal-800 text-sm">
               Email
@@ -89,7 +95,7 @@ export default function Login() {
 
           <Button
             className="w-full bg-teal-800 hover:bg-teal-900 mt-4"
-            onClick={handleLogin}
+            type="submit"
           >
             Log In
           </Button>
