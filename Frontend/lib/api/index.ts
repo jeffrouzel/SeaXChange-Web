@@ -60,10 +60,10 @@ export const fetchAssetById = async (id: string): Promise<AssetDetails> => {
       'Fisher'
     ];
     
-    const missingFields = requiredFields.filter(field => !response.data[field]);
-    if (missingFields.length > 0) {
-      throw new Error(`Invalid asset data: Missing required fields: ${missingFields.join(', ')}`);
-    }
+    // const missingFields = requiredFields.filter(field => !response.data[field]);
+    // if (missingFields.length > 0) {
+    //   throw new Error(`Invalid asset data: Missing required fields: ${missingFields.join(', ')}`);
+    // }
 
     return response.data;
   } catch (error) {
@@ -81,15 +81,40 @@ export const fetchAssetById = async (id: string): Promise<AssetDetails> => {
 };
 
 // Create a new asset
+// export const createAsset = async (assetData: any) => {
+//   try {
+//     const response = await axios.post(`${API_BASE_URL}/createAsset`, assetData);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error creating asset:", error);
+//     throw error;
+//   }
+// };
+// lib/api.ts
+
 export const createAsset = async (assetData: any) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/createAsset`, assetData);
-    return response.data;
+    const response = await fetch("http://35.238.113.73:5000/createAsset", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(assetData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to create asset");
+    }
+
+    return data;
   } catch (error) {
-    console.error("Error creating asset:", error);
+    console.error("API Error in createAsset:", error);
     throw error;
   }
 };
+
 
 // Update an asset
 export const updateAsset = async (assetData: any) => {

@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 type AssetDetail = {
   label: string;
-  value: string;
+  value: string; // this will be used as a placeholder
 };
 
 type CatchDetailsTableProps = {
@@ -18,11 +19,15 @@ type CatchDetailsTableProps = {
 export default function CatchDetailsTable({
   assetDetails,
   editableFields = [],
-  onChange
+  onChange,
 }: CatchDetailsTableProps) {
   const [editingField, setEditingField] = useState<string | null>(null);
+  const pathname = usePathname();
+  const isAddCatchPage = pathname.includes("/addcatch");
+
+  // Initialize values as empty strings to allow placeholder to show
   const [editedValues, setEditedValues] = useState<{ [key: string]: string }>(
-    Object.fromEntries(assetDetails.map((item) => [item.label, item.value]))
+    Object.fromEntries(assetDetails.map((item) => [item.label, ""]))
   );
 
   const handleEditClick = (label: string) => {
@@ -37,20 +42,18 @@ export default function CatchDetailsTable({
       /[^a-zA-Z\s]/.test(newValue)
     )
       return;
-    
+
     setEditedValues((prev) => ({ ...prev, [label]: newValue }));
-    
-    // Map the label back to the asset property name
+
     const propertyMap: { [key: string]: string } = {
-      "ID": "ID",
-      "Species": "Species",
+      ID: "ID",
+      Species: "Species",
       "Catch Location": "CatchLocation",
       "Catch Date": "CatchDate",
       "Fishing Method": "FishingMethod",
-      "Fisher": "Fisher"
+      Fisher: "Fisher",
     };
 
-    // Notify parent component of changes
     if (onChange && propertyMap[label]) {
       onChange({ [propertyMap[label]]: newValue });
     }
@@ -69,12 +72,15 @@ export default function CatchDetailsTable({
         >
           <span className="font-medium">{item.label}</span>
           <div className="flex items-center gap-2">
-            {editingField === item.label ? (
+            {isAddCatchPage && editingField === item.label ? (
               item.label === "Catch Date" ? (
                 <input
                   type="date"
                   value={editedValues[item.label]}
-                  onChange={(e) => handleInputChange(item.label, e.target.value)}
+                  placeholder={item.value}
+                  onChange={(e) =>
+                    handleInputChange(item.label, e.target.value)
+                  }
                   onBlur={handleSave}
                   className="border p-1 rounded"
                 />
@@ -82,7 +88,10 @@ export default function CatchDetailsTable({
                 <input
                   type="text"
                   value={editedValues[item.label]}
-                  onChange={(e) => handleInputChange(item.label, e.target.value)}
+                  placeholder={item.value}
+                  onChange={(e) =>
+                    handleInputChange(item.label, e.target.value)
+                  }
                   onBlur={handleSave}
                   onKeyDown={(e) => e.key === "Enter" && handleSave()}
                   autoFocus
@@ -90,10 +99,14 @@ export default function CatchDetailsTable({
                 />
               )
             ) : (
-              <span>{editedValues[item.label]}</span>
+              <span>
+                {editedValues[item.label] || (
+                  <span className="text-black font-medium">{item.value}</span>
+                )}
+              </span>
             )}
 
-            {editableFields.includes(item.label) && (
+            {isAddCatchPage && editableFields.includes(item.label) && (
               <Button
                 variant="ghost"
                 size="icon"

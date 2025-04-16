@@ -106,9 +106,11 @@ export default function CatchDetailsPage() {
         { label: "Catch Date", value: assetDetails.CatchDate },
         { label: "Fishing Method", value: assetDetails.FishingMethod },
         { label: "Fisher", value: assetDetails.Fisher },
-        { label: "Supplier", value: assetDetails.Supplier || "NA" },
-        { label: "Retailer", value: assetDetails.Retailers.join(", ") || "NA" },
-        { label: "Consumer", value: assetDetails.Consumers.join(", ") || "NA" },
+        { label: "Supplier", value: assetDetails.Supplier || "Not assigned" },
+        { label: "Supplier Location", value: assetDetails.SellingLocationSupplier || "Not assigned" },
+        { label: "Retailers", value: assetDetails.Retailers.join(", ") || "Not assigned" },
+        { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.join(", ") || "Not assigned" },
+        { label: "Consumers", value: assetDetails.Consumers.join(", ") || "Not assigned" }
       ]
     : [];
 

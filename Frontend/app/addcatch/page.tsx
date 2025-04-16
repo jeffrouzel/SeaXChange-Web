@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Weight } from "lucide-react";
 import SendCard from "@/components/ui/SendCard";
 import CatchDetailsTable from "@/components/CatchTable";
 import SaveAlert from "@/components/SaveAlert";
@@ -13,6 +13,7 @@ import { getEditableFieldsForRole } from "@/lib/editableFieldsByRole";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase.config";
+import { createAsset } from "@/lib/api"; // Adjust the import path as necessary
 
 export default function NewCatchPage() {
   const router = useRouter();
@@ -23,18 +24,46 @@ export default function NewCatchPage() {
   const handleBack = () => router.back();
   const handleOpenSendCard = () => setIsSendCardOpen(true);
   const handleCloseSendCard = () => setIsSendCardOpen(false);
-  const handleSaveDetails = () => setIsDetailsSaved(true);
+
+  const handleSaveDetails = async () => {
+    const safeAsset = {
+      id: newAsset.ID || "",
+      species: newAsset.Species || "",
+      weight: "0",
+      catchLocation: newAsset.CatchLocation || "",
+      catchDate: newAsset.CatchDate || "",
+      fishingMethod: newAsset.FishingMethod || "",
+      fisher: newAsset.Fisher || "",
+      supplier: newAsset.Supplier || "",
+      sellingLocationSupplier: "",
+      retailers: [],
+      sellingLocationRetailers: [],
+      consumers: [],
+    };
+  
+    try {
+      const data = await createAsset(safeAsset);
+      console.log("Asset created:", data);
+      setIsDetailsSaved(true);
+    } catch (error) {
+      console.error("Failed to save asset:", error);
+    }
+  };
+  
+  
 
   // New blank asset state
   const [newAsset, setNewAsset] = useState({
-    ID: "Enter ID",
-    Species: "Set Species",
-    CatchLocation: "Set Catch Location",
-    CatchDate: "Set Catch Date",
-    FishingMethod: "Set Fishing Method",
-    Fisher: "Enter Fisher",
+    ID: "",
+    Species: "",
+    CatchLocation: "",
+    CatchDate: "",
+    FishingMethod: "",
+    Fisher: "",
     Supplier: "",
+    SupplierLocation: "",
     Retailers: [],
+    RetailerLocation: [],
     Consumers: [],
   });
 
@@ -76,16 +105,19 @@ export default function NewCatchPage() {
   }, []);
 
   const formattedDetails = [
-    { label: "ID", value: newAsset.ID },
-    { label: "Species", value: newAsset.Species },
-    { label: "Catch Location", value: newAsset.CatchLocation },
-    { label: "Catch Date", value: newAsset.CatchDate },
-    { label: "Fishing Method", value: newAsset.FishingMethod },
-    { label: "Fisher", value: newAsset.Fisher },
-    { label: "Supplier", value: newAsset.Supplier || "NA" },
-    { label: "Retailer", value: newAsset.Retailers.join(", ") || "NA" },
-    { label: "Consumer", value: newAsset.Consumers.join(", ") || "NA" },
+    { label: "ID", key: "ID", placeholder: "Enter ID", value: newAsset.ID },
+    { label: "Species", key: "Species", placeholder: "Set Species", value: newAsset.Species },
+    { label: "Catch Location", key: "CatchLocation", placeholder: "Set Catch Location", value: newAsset.CatchLocation },
+    { label: "Catch Date", key: "CatchDate", placeholder: "Set Catch Date", value: newAsset.CatchDate },
+    { label: "Fishing Method", key: "FishingMethod", placeholder: "Set Fishing Method", value: newAsset.FishingMethod },
+    { label: "Fisher", key: "Fisher", placeholder: "Enter Fisher", value: newAsset.Fisher },
+    { label: "Supplier", key: "Supplier", placeholder: "Set Supplier", value: newAsset.Supplier },
+    { label: "Supplier Location", key: "SupplierLocation", placeholder: "Set Supplier", value: newAsset.SupplierLocation },
+    { label: "Retailer", key: "Retailers", placeholder: "Add Retailers", value: newAsset.Retailers.join(", ") },
+    { label: "Retailer Location", key: "RetailerLocation", placeholder: "Add Retailers", value: newAsset.RetailerLocation.join(", ") },
+    { label: "Consumer", key: "Consumers", placeholder: "Add Consumers", value: newAsset.Consumers.join(", ") },
   ];
+  
 
   return (
     <div className="min-h-screen bg-white">
@@ -103,11 +135,29 @@ export default function NewCatchPage() {
 
         <div className="mx-auto max-w-5xl px-4 my-8">
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <CatchDetailsTable
-              assetDetails={formattedDetails}
-              editableFields={editableFields}
-              onChange={(updated) => setNewAsset({ ...newAsset, ...updated })}
+          <CatchDetailsTable
+              assetDetails={[
+                { label: "ID", value: "Enter ID" },
+                { label: "Species", value: "Set Species" },
+                { label: "Catch Location", value: "Enter Location" },
+                { label: "Catch Date", value: "Select Date" },
+                { label: "Fishing Method", value: "Describe Method" },
+                { label: "Fisher", value: "Enter Fisher Name" },
+                { label: "Supplier", value: "NA" },
+                { label: "Supplier Location", value: "NA" },
+                { label: "Retailer", value: "NA" },
+                { label: "Retailer Location", value: "NA" },
+                { label: "Consumer", value: "NA" },
+              ]}
+              editableFields={["ID", "Species", "Catch Location", "Catch Date", "Fishing Method", "Fisher"]}
+              onChange={(updates) =>
+                setNewAsset((prevAsset) => ({
+                  ...prevAsset,
+                  ...updates,
+                }))
+              }
             />
+
           </div>
         </div>
 
