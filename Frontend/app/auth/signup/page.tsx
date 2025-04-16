@@ -10,8 +10,25 @@ import WarningAlert from "@/components/WarningAlert";
 import { useState } from "react";
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, query, collection, where } from "firebase/firestore";
 import { auth, db } from "@/firebase.config";
+
+function generateCustomId(): string {
+  return Math.floor(100000000 + Math.random() * 900000000).toString();
+}
+
+async function generateUniqueCustomId(): Promise<string> {
+  const customId = generateCustomId();
+  const querySnapshot = await getDocs(
+    query(collection(db, "users"), where("customId", "==", customId))
+  );
+  
+  if (querySnapshot.empty) {
+    return customId;
+  }
+  // If ID exists, try again recursively
+  return generateUniqueCustomId();
+}
 
 export default function Signup() {
   const router = useRouter();
@@ -65,35 +82,36 @@ export default function Signup() {
 
   const handleSignUp = async () => {
     try {
-      if (!verifySignUp()) return; // Verify signup details before proceeding
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      if (!verifySignUp()) return;
+      const response = await createUserWithEmailAndPassword(auth, email, password);
 
+      const customId = await generateUniqueCustomId();
       const userDoc: {
         userId: string;
+        customId: string;
         name: string;
         email: string;
         password: string;
         userType: string;
       } = {
         userId: response.user.uid,
+        customId: customId,
         name: name,
         email: email,
         password: password,
         userType: "",
       };
 
+      // Create a Firestore index for customId if you want to query by it
       await setDoc(doc(db, "users", response.user.uid), userDoc);
 
-      router.push("/auth/signup-roles"); // Redirect after successful signup
+      router.push("/auth/signup-roles");
     } catch (err: any) {
       console.error(err.message);
       setError(err.message);
     }
   };
+
   return (
     <div className="flex h-screen">
       {/* Left Side (Form) */}

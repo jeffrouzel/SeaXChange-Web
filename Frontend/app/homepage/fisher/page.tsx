@@ -29,7 +29,7 @@ export default function FisherHomepage() {
         const data = await fetchAssets();
         // Filter assets for the current fisher (you might want to adjust this logic)
         const filteredData = data.filter(
-          (tuna: TunaAsset) => !tuna.ID.startsWith("asset1743231585365")
+          (tuna: TunaAsset) => !tuna.ID.startsWith("asset")
         ); // remove id created by app gateway
         setTunaData(filteredData);
       } catch (err) {
