@@ -39,6 +39,8 @@ export default function CatchDetailsPage() {
 
   const [editableFields, setEditableFields] = useState<string[]>([]);
 
+  const [userRole, setUserRole] = useState<string | null>(null);
+
   useEffect(() => {
     const loadAssetDetails = async () => {
       try {
@@ -53,6 +55,7 @@ export default function CatchDetailsPage() {
           const role = userDoc.exists() ? userDoc.data().userType : null;
 
           if (role) {
+            setUserRole(role);
             const allowedFields = getEditableFieldsForRole(role);
             setEditableFields(allowedFields);
           }
@@ -74,6 +77,49 @@ export default function CatchDetailsPage() {
 
     loadAssetDetails();
   }, [assetId]);
+
+  // For access based features on shared catch table
+  const canEditAndSave = () => {
+    if (!assetDetails || !userRole) return false;
+
+    const supplierUnassigned = !assetDetails.Supplier;
+    const supplierLocUnassigned = !assetDetails.SellingLocationSupplier;
+    const retailersUnassigned = !assetDetails.Retailers?.length;
+    const retailLocUnassigned = !assetDetails.SellingLocationRetailers?.length;
+    const consumersUnassigned = !assetDetails.Consumers?.length;
+
+    if (
+      supplierUnassigned &&
+      supplierLocUnassigned &&
+      retailersUnassigned &&
+      retailLocUnassigned &&
+      consumersUnassigned &&
+      userRole === "fisher"
+    ) {
+      return true;
+    }
+
+    if (
+      !supplierUnassigned &&
+      retailersUnassigned &&
+      retailLocUnassigned &&
+      consumersUnassigned &&
+      userRole === "supplier"
+    ) {
+      return true;
+    }
+
+    if (
+      !retailersUnassigned &&
+      !retailLocUnassigned &&
+      consumersUnassigned &&
+      userRole === "retailer"
+    ) {
+      return true;
+    }
+
+    return false;
+  };
 
   if (loading) {
     return (
@@ -139,13 +185,23 @@ export default function CatchDetailsPage() {
 
         <div className="mx-auto max-w-5xl px-4 h-16 flex items-center justify-evenly">
           <div />
-          {!isDetailsSaved ? <SaveAlert onSave={handleSaveDetails} /> : null}
-          {!isDetailsSaved ? <SendAlert /> : null}
-          {isDetailsSaved && (
+          {!isDetailsSaved && canEditAndSave() && (
+            <>
+              <SaveAlert onSave={handleSaveDetails} />
+              <SendAlert />
+            </>
+          )}
+
+          {isDetailsSaved && canEditAndSave() && (
             <Button variant="outline" onClick={handleOpenSendCard}>
               Send Tuna
             </Button>
           )}
+          {/* {isDetailsSaved && (
+            <Button variant="outline" onClick={handleOpenSendCard}>
+              Send Tuna
+            </Button>
+          )} */}
           <div />
         </div>
       </main>
