@@ -94,7 +94,8 @@ export const fetchAssetById = async (id: string): Promise<AssetDetails> => {
 
 export const createAsset = async (assetData: any) => {
   try {
-    const response = await fetch("http://35.238.113.73:5000/createAsset", {
+    // const response = await fetch("API_BASE_URL/createAsset", 
+    const response = await fetch(`${API_BASE_URL}/createAsset`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -128,12 +129,30 @@ export const updateAsset = async (assetData: any) => {
 };
 
 // Transfer an asset
-export const transferAsset = async (assetData: any) => {
+export const transferAsset = async (assetData: {
+  id: string;
+  role: string;
+  newParticipant: string;
+  newLocation: string;
+}) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/transferAsset`, assetData);
-    return response.data;
+    const response = await fetch(`${API_BASE_URL}/transferAsset`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(assetData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to transfer asset");
+    }
+
+    return data;
   } catch (error) {
-    console.error("Error transferring asset:", error);
+    console.error("API Error in transferAsset:", error);
     throw error;
   }
 };
