@@ -1,9 +1,12 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X } from "lucide-react";
 import { transferAsset } from "@/lib/api";
 import { useParams } from 'next/navigation';
+import { getAuth } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase.config";
 
 
 interface SendCardProps {
@@ -15,43 +18,79 @@ const SendCard: React.FC<SendCardProps> = ({ onClose }) => {
     const [name, setName] = useState("");
     const [userId, setUserId] = useState("");
     const [location, setLocation] = useState("");
+    // const [nextRole, setNextRole] = useState("");
+    const [userRole, setUserRole] = useState("");
 
     // Simulated session role (replace with actual session hook later)
-    const userRole = "Fisher"; // simulate for now
+    // const userRole = "Fisher"; // simulate for now
     const params = useParams();
     const assetId = params?.id as string;
+    
+    useEffect(() => {
+        const fetchUserRole = async () => {
+          try {
+            const auth = getAuth();
+            const user = auth.currentUser;
+            if (!user) return;
+    
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+              const data = userDoc.data();
+              const formattedRole = data.userType.charAt(0).toUpperCase() + data.userType.slice(1);
+              setUserRole(formattedRole); // set from Firestore
+              setName(data.name);         // prefill name if needed
+              setUserId(data.customId || user.uid); // prefill ID
+              console.log("Fetched user role:", formattedRole);
+            }
+          } catch (error) {
+            console.error("Error fetching user role:", error);
+          }
+        };
+    
+        fetchUserRole();
+      }, []);
+
+    const getAvailableRoles = () => {
+        if (userRole === "Fisher") return ["Supplier"];
+        if (userRole === "Supplier") return ["Retailer"];
+        if (userRole === "Retailer") return ["Retailer"];
+        return [];
+    };
+
+    const getNextRole = () => {
+        if (userRole === "Fisher") return "Supplier";
+        if (userRole === "Supplier") return "Retailer";
+        if (userRole === "Retailer") return "Retailer";
+        return "";
+    };
+
+    const nextRole = getNextRole();
+
+    
 
 
     // Handle send button click
     const handleSend = async () => {
-        if (userRole === "Fisher") {
-            const newParticipant = `${userId}:${name}`;
+        // if (!getAvailableRoles().includes(nextRole)) {
+        //     return alert(`❌ Invalid role transition.`);
+        // }
 
+        const newParticipant = `${userId}:${name}`;
 
-            console.log("Sending:", { assetId, userId, name, location, newParticipant });
+        console.log("Sending:", { assetId, userId, name, location, newParticipant, nextRole });
 
-            try {
-                const result = await transferAsset({
-                    id: assetId,
-                    role: "Supplier",
-                    newParticipant: `${userId}:${name}`,
-                    newLocation: location,
-                });
+        try {
+            const result = await transferAsset({
+                id: assetId,
+                role: nextRole,
+                newParticipant,
+                newLocation: location,
+            });
 
-                // const result = await response.json();
-                // if (response.ok) {
-                //     alert(`✅ Asset transferred successfully.\nOld Owner: ${result.oldOwner}`);
-                //     onClose(); // close modal
-                // } else {
-                //     alert(`❌ Transfer failed: ${result.error}`);
-                // }
-                alert(`✅ Asset transferred successfully to ${newParticipant} at ${location}.`);
-                onClose(); // close modal
-            } catch (error) {
-                alert(`❌ Error: ${error}`);
-            }
-        } else {
-            alert("❌ Unauthorized: Only Fisher can transfer asset.");
+            alert(`✅ Asset transferred to ${nextRole} (${newParticipant}) at ${location}.`);
+            onClose(); // Close modal
+        } catch (error) {
+            alert(`❌ Error: ${error}`);
         }
     };
 
