@@ -16,6 +16,15 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase.config";
 
+const extractName = (value: string): string => {
+  const parts = value.split(':');
+  return parts.length > 1 ? parts.slice(1).join(':').trim() : value;
+};
+
+const extractNamesFromArray = (values: string[] = []): string[] => {
+  return values.map(extractName);
+};
+
 export default function CatchDetailsPage() {
   const router = useRouter();
   const params = useParams();
@@ -112,7 +121,7 @@ export default function CatchDetailsPage() {
     if (
       !retailersUnassigned &&
       !retailLocUnassigned &&
-      consumersUnassigned &&
+      !consumersUnassigned &&
       userRole === "retailer"
     ) {
       return true;
@@ -151,12 +160,12 @@ export default function CatchDetailsPage() {
         { label: "Catch Location", value: assetDetails.CatchLocation },
         { label: "Catch Date", value: assetDetails.CatchDate },
         { label: "Fishing Method", value: assetDetails.FishingMethod },
-        { label: "Fisher", value: assetDetails.Fisher },
-        { label: "Supplier", value: assetDetails.Supplier || "Not assigned" },
+        { label: "Fisher", value: extractName(assetDetails.Fisher) },
+        { label: "Supplier", value: extractName(assetDetails.Supplier || "Not assigned") },
         { label: "Supplier Location", value: assetDetails.SellingLocationSupplier || "Not assigned" },
-        { label: "Retailers", value: assetDetails.Retailers.join(", ") || "Not assigned" },
+        { label: "Retailers", value: extractNamesFromArray(assetDetails.Retailers).join(", ") || "Not assigned" },
         { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.join(", ") || "Not assigned" },
-        { label: "Consumers", value: assetDetails.Consumers.join(", ") || "Not assigned" }
+        { label: "Consumers", value: extractNamesFromArray(assetDetails.Consumers).join(", ") || "Not assigned" }
       ]
     : [];
 

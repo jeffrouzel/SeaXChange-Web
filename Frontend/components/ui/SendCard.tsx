@@ -21,6 +21,8 @@ const SendCard: React.FC<SendCardProps> = ({ onClose }) => {
     // const [nextRole, setNextRole] = useState("");
     const [userRole, setUserRole] = useState("");
 
+    const [sendToRetailer, setSendToRetailer] = useState(false);
+
     // Simulated session role (replace with actual session hook later)
     // const userRole = "Fisher"; // simulate for now
     const params = useParams();
@@ -37,10 +39,11 @@ const SendCard: React.FC<SendCardProps> = ({ onClose }) => {
             if (userDoc.exists()) {
               const data = userDoc.data();
               const formattedRole = data.userType.charAt(0).toUpperCase() + data.userType.slice(1);
-              setUserRole(formattedRole); // set from Firestore
-              setName(data.name);         // prefill name if needed
-              setUserId(data.customId || user.uid); // prefill ID
+            //   setUserRole(formattedRole); // set from Firestore
+            //   setName(data.name);         // prefill name if needed
+            //   setUserId(data.customId || user.uid); // prefill ID
               console.log("Fetched user role:", formattedRole);
+              setUserRole(formattedRole);
             }
           } catch (error) {
             console.error("Error fetching user role:", error);
@@ -60,7 +63,7 @@ const SendCard: React.FC<SendCardProps> = ({ onClose }) => {
     const getNextRole = () => {
         if (userRole === "Fisher") return "Supplier";
         if (userRole === "Supplier") return "Retailer";
-        if (userRole === "Retailer") return "Retailer";
+        if (userRole === "Retailer") return sendToRetailer ? "Retailer" : "Consumer";
         return "";
     };
 
@@ -132,6 +135,35 @@ const SendCard: React.FC<SendCardProps> = ({ onClose }) => {
                         onChange={(e) => setLocation(e.target.value)}
                     />
                 </div>
+
+                 {/* ✅ RETAILER: Radio options for next role */}
+{userRole === "Retailer" && (
+    <div className="mb-4">
+        <p className="text-sm font-medium text-gray-700 mb-2">Send To</p>
+        <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2">
+                <input
+                    type="radio"
+                    name="nextRole"
+                    value="Consumer"
+                    checked={!sendToRetailer}
+                    onChange={() => setSendToRetailer(false)}
+                />
+                <span className="text-sm text-gray-700">Consumer</span>
+            </label>
+            <label className="flex items-center gap-2">
+                <input
+                    type="radio"
+                    name="nextRole"
+                    value="Retailer"
+                    checked={sendToRetailer}
+                    onChange={() => setSendToRetailer(true)}
+                />
+                <span className="text-sm text-gray-700">Another Retailer</span>
+            </label>
+        </div>
+    </div>
+)}
 
                 {/* Send Button */}
                 <div className="flex justify-center">
