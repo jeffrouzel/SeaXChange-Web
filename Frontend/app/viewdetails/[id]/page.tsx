@@ -10,6 +10,15 @@ import CatchDetailsTable from "@/components/CatchTable";
 import { fetchAssetById, type AssetDetails } from "@/lib/api";
 // import { useRouter } from 'next/router';
 
+const extractName = (value: string): string => {
+  const parts = value.split(':');
+  return parts.length > 1 ? parts.slice(1).join(':').trim() : value;
+};
+
+const extractNamesFromArray = (values: string[] = []): string[] => {
+  return values.map(extractName);
+};
+
 export default function CatchDetailsPage() {
   const router = useRouter();
   const params = useParams();
@@ -78,17 +87,17 @@ export default function CatchDetailsPage() {
   const formattedDetails = [
     { label: "ID", value: assetDetails.ID },
     { label: "Species", value: assetDetails.Species },
-    // { label: "Weight (kg)", value: assetDetails.Weight.toString() },
     { label: "Catch Location", value: assetDetails.CatchLocation },
     { label: "Catch Date", value: assetDetails.CatchDate },
     { label: "Fishing Method", value: assetDetails.FishingMethod },
-    { label: "Fisher", value: assetDetails.Fisher },
-    { label: "Supplier", value: assetDetails.Supplier || "Not assigned" },
+    { label: "Fisher", value: extractName(assetDetails.Fisher) },
+    { label: "Supplier", value: extractName(assetDetails.Supplier || "Not assigned") },
     { label: "Supplier Location", value: assetDetails.SellingLocationSupplier || "Not assigned" },
-    { label: "Retailers", value: assetDetails.Retailers.join(", ") || "Not assigned" },
+    { label: "Retailers", value: extractNamesFromArray(assetDetails.Retailers).join(", ") || "Not assigned" },
     { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.join(", ") || "Not assigned" },
-    { label: "Consumers", value: assetDetails.Consumers.join(", ") || "Not assigned" }
+    { label: "Consumers", value: extractNamesFromArray(assetDetails.Consumers).join(", ") || "Not assigned" }
   ];
+  
 
   return (
     <div className="min-h-screen bg-white">

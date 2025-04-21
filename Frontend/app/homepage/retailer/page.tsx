@@ -28,7 +28,7 @@ export default function RetailerHomepage() {
       try {
         const data = await fetchAssets();
         // You might want to filter for assets relevant to retailers
-        const filteredData = data.filter((tuna : TunaAsset) => !tuna.ID.startsWith('asset1743231585365')); // remove id created by app gateway
+        const filteredData = data.filter((tuna : TunaAsset) => !tuna.ID.startsWith('asset')); // remove id created by app gateway
         setTunaData(filteredData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch tuna data');

@@ -10,6 +10,8 @@ interface UserData {
   userType: string;
   customId?: string;
 }
+const capitalizeFirstLetter = (str: string) =>
+  str.charAt(0).toUpperCase() + str.slice(1);
 
 const ProfileContent = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -62,7 +64,7 @@ const ProfileContent = () => {
 
           <div className="grid grid-cols-3 items-center gap-4">
             <Label htmlFor="role">Role:</Label>
-            <p>{userData?.userType || 'Not available'}</p>
+            <p>{userData?.userType ? capitalizeFirstLetter(userData.userType) : 'Not available'}</p>
           </div>
 
           <div className="grid grid-cols-3 items-center gap-4">
