@@ -108,12 +108,12 @@ export default function CatchDetailsPage() {
           <ArrowLeft className="text-white"/>
         </Button>
         <div className="bg-white px-6 py-2 shadow-md rounded-md">
-          <span className="font-bold text-black">{assetDetails.ID}</span>
+          <span className="font-bold text-black text-md md:text-lg lg:text-lg ">{assetDetails.ID}</span>
         </div>
         <div></div>
       </div>
 
-      <div className="mx-auto my-[40] max-w-7xl sm:px-4">
+      <div className="mx-auto my-[40] max-w-7xl sm:px-4 text-sm md:text-lg lg:text-lg ">
         <CatchDetailsTable
           assetDetails={formattedDetails}
           editableFields={[]}
