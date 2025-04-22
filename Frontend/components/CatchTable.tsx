@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 type AssetDetail = {
   label: string;
-  value: string; // this will be used as a placeholder
+  value: string| ReactNode | ReactNode[]; // this will be used as a placeholder
 };
 
 type CatchDetailsTableProps = {
@@ -77,7 +77,7 @@ export default function CatchDetailsTable({
                 <input
                   type="date"
                   value={editedValues[item.label]}
-                  placeholder={item.value}
+                  placeholder={typeof item.value === 'string' ? item.value : ''}
                   onChange={(e) =>
                     handleInputChange(item.label, e.target.value)
                   }
@@ -88,7 +88,7 @@ export default function CatchDetailsTable({
                 <input
                   type="text"
                   value={editedValues[item.label]}
-                  placeholder={item.value}
+                  placeholder={typeof item.value === 'string' ? item.value : ''}
                   onChange={(e) =>
                     handleInputChange(item.label, e.target.value)
                   }
@@ -99,11 +99,19 @@ export default function CatchDetailsTable({
                 />
               )
             ) : (
-              <span>
-                {editedValues[item.label] || (
-                  <span className="text-black font-medium">{item.value}</span>
-                )}
-              </span>
+              <div className="text-right">
+              {editedValues[item.label] || (
+                <span className="text-black font-medium text-sm md:text-lg lg:text-lg flex justify-end">
+                  {Array.isArray(item.value) ? (
+                    <div className="flex flex-col items-end">
+                      {item.value}
+                    </div>
+                  ) : (
+                    item.value
+                  )}
+                </span>
+              )}
+            </div>
             )}
 
             {isAddCatchPage && editableFields.includes(item.label) && (

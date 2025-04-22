@@ -163,9 +163,10 @@ export default function CatchDetailsPage() {
         { label: "Fisher", value: extractName(assetDetails.Fisher) },
         { label: "Supplier", value: extractName(assetDetails.Supplier || "Not assigned") },
         { label: "Supplier Location", value: assetDetails.SellingLocationSupplier || "Not assigned" },
-        { label: "Retailers", value: extractNamesFromArray(assetDetails.Retailers).join(", ") || "Not assigned" },
-        { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.join(", ") || "Not assigned" },
-        { label: "Consumers", value: extractNamesFromArray(assetDetails.Consumers).join(", ") || "Not assigned" }
+        { label: "Retailers", value: extractNamesFromArray(assetDetails.Retailers).map((name, i) => <div key={i}>{name}</div>) || "Not assigned" },
+        { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.map((loc, i) => <div key={i}>{loc}</div>) || "Not assigned" },
+        { label: "Consumers", value: extractNamesFromArray(assetDetails.Consumers).map((name, i) => <div key={i}>{name}</div>) || "Not assigned" }
+
       ]
     : [];
 
@@ -178,13 +179,13 @@ export default function CatchDetailsPage() {
             <ArrowLeft className="text-white" />
           </Button>
           <div className="bg-white px-6 py-2 shadow-md rounded-md">
-            <span className="font-bold text-black">{assetDetails?.ID}</span>
+            <span className="font-bold text-black text-md md:text-lg lg:text-lg">{assetDetails?.ID}</span>
           </div>
           <div></div>
         </div>
 
         <div className="mx-auto max-w-5xl px-4 my-8">
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden text-sm md:text-lg lg:text-lg">
             <CatchDetailsTable
               assetDetails={formattedDetails}
               editableFields={isDetailsSaved ? [] : editableFields}
