@@ -93,9 +93,9 @@ export default function CatchDetailsPage() {
     { label: "Fisher", value: extractName(assetDetails.Fisher) },
     { label: "Supplier", value: extractName(assetDetails.Supplier || "Not assigned") },
     { label: "Supplier Location", value: assetDetails.SellingLocationSupplier || "Not assigned" },
-    { label: "Retailers", value: extractNamesFromArray(assetDetails.Retailers).join(", ") || "Not assigned" },
-    { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.join(", ") || "Not assigned" },
-    { label: "Consumers", value: extractNamesFromArray(assetDetails.Consumers).join(", ") || "Not assigned" }
+    { label: "Retailers", value: extractNamesFromArray(assetDetails.Retailers).map((name, i) => <div key={i}>{name}</div>) || "Not assigned" },
+    { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.map((loc, i) => <div key={i}>{loc}</div>) || "Not assigned" },
+    { label: "Consumers", value: extractNamesFromArray(assetDetails.Consumers).map((name, i) => <div key={i}>{name}</div>) || "Not assigned" }
   ];
   
 
@@ -103,22 +103,22 @@ export default function CatchDetailsPage() {
     <div className="min-h-screen bg-white">
       <HomepageHeader title="Catch Details" />
       <main className="min-h-[70vh] bg-[#429FAD] pb-12">
-        <div className="w-full h-25 bg-[#429FAD] flex items-center justify-between px-8 pt-[40]">
-          <Button variant="ghost" size="icon" onClick={handleBack}>
-            <ArrowLeft className="text-white"/>
-          </Button>
-          <div className="bg-white px-6 py-2 shadow-md rounded-md">
-            <span className="font-bold text-black">{assetDetails.ID}</span>
-          </div>
-          <div></div>
+      <div className="w-full h-25 bg-[#429FAD] flex items-center justify-between px-8 pt-[40] md:px-2 sm:px-2">
+        <Button variant="ghost" size="icon" onClick={handleBack}>
+          <ArrowLeft className="text-white"/>
+        </Button>
+        <div className="bg-white px-6 py-2 shadow-md rounded-md">
+          <span className="font-bold text-black">{assetDetails.ID}</span>
         </div>
+        <div></div>
+      </div>
 
-        <div className="mx-[150] my-[40]">
-          <CatchDetailsTable
-            assetDetails={formattedDetails}
-            editableFields={[]}
-          />
-        </div>
+      <div className="mx-auto my-[40] max-w-7xl sm:px-4">
+        <CatchDetailsTable
+          assetDetails={formattedDetails}
+          editableFields={[]}
+        />
+      </div>
       </main>
     </div>
   );
