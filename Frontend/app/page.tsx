@@ -7,7 +7,7 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* SeaXChange Logo */}
       <header className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-teal-800 font-bold text-lg">SeaXChange</h1>
+        <h1 className="text-cyan-800 font-bold text-lg">SeaXChange</h1>
         {/* Login and Register */}
         <div className="space-x-2">
           <Button variant="outline">
@@ -26,12 +26,12 @@ export default function Home() {
             plate”
           </p>
         </div>
-        <div className="bg-teal-800 flex justify-center items-center text-white">
+        <div className="bg-cyan-800 flex justify-center items-center text-white">
           Picture
         </div>
       </main>
 
-      <footer className="text-center py-6 text-teal-800">Some Footer</footer>
+      <footer className="text-center py-6 text-cyan-800">Some Footer</footer>
     </div>
   );
 }

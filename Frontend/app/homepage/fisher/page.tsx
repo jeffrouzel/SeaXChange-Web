@@ -73,7 +73,7 @@ export default function FisherHomepage() {
       <div className="flex justify-center my-6 gap-4">
         <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
         <Link href="/addcatch">
-          <button className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
+          <button className="bg-white text-cyan-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-cyan-100">
             <Plus size={18} /> ADD CATCH
           </button>
         </Link>

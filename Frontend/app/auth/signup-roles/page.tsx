@@ -58,13 +58,13 @@ export default function SignupRoles() {
       {/* Left Side (Form) */}
       <div className="w-1/2 flex flex-col justify-center items-center p-8">
         {/* SeaXChange Logo */}
-        <h1 className="absolute top-10 left-10 text-2xl font-bold mb-6 text-teal-700 flex items-center">
+        <h1 className="absolute top-10 left-10 text-2xl font-bold mb-6 text-cyan-700 flex items-center">
           <img src="/tuna-logo.png" alt="SeaXChange" className="h-8 mr-2" />
           SeaXChange
         </h1>
 
         <div className="mb-4">
-          <Label htmlFor="userType" className="text-teal-800 text-sm text-l">
+          <Label htmlFor="userType" className="text-cyan-800 text-sm text-l">
             You are a
           </Label>
           <select
@@ -83,7 +83,7 @@ export default function SignupRoles() {
           </select>
         </div>
         <Button
-          className="w-lg bg-teal-800 hover:bg-teal-900"
+          className="w-lg bg-cyan-800 hover:bg-cyan-900"
           onClick={handleSubmit}
           disabled={!userType} // Disable button if no selection
         >
@@ -91,7 +91,7 @@ export default function SignupRoles() {
         </Button>
       </div>
       {/* Right Side (Image/Graphic) */}
-      <div className="w-1/2 bg-teal-800 flex flex-col justify-center items-center text-white">
+      <div className="w-1/2 bg-cyan-800 flex flex-col justify-center items-center text-white">
         <img
           src="/tuna-background.jpg"
           alt="tuna"
