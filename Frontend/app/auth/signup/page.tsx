@@ -113,17 +113,17 @@ export default function Signup() {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen flex-row">
       {/* Left Side (Form) */}
       <div className="w-1/2 flex flex-col justify-center items-center p-8">
         {/* SeaXChange Logo */}
-        <h1 className="absolute top-10 left-10 text-2xl font-bold mb-6 text-teal-700 flex items-center">
+        <h1 className="absolute top-10 left-10 text-2xl font-bold mb-6 text-[#348493] flex items-center">
           <img src="/tuna-logo.png" alt="SeaXChange" className="h-8 mr-2" />
           SeaXChange
         </h1>
         <form className="w-full max-w-sm">
           <div className="mb-4">
-            <Label htmlFor="name" className="text-teal-800 text-sm">
+            <Label htmlFor="name" className="text-[#348493] text-sm">
               Name
             </Label>
             <Input
@@ -136,7 +136,7 @@ export default function Signup() {
             />
           </div>
           <div className="mb-4">
-            <Label htmlFor="email" className="text-teal-800 text-sm">
+            <Label htmlFor="email" className="text-[#348493] text-sm">
               Email
             </Label>
             <Input
@@ -149,7 +149,7 @@ export default function Signup() {
             />
           </div>
           <div className="mb-4">
-            <Label htmlFor="password" className="text-teal-800 text-sm">
+            <Label htmlFor="password" className="text-[#348493] text-sm">
               Password
             </Label>
             <Input
@@ -162,7 +162,7 @@ export default function Signup() {
             />
           </div>
           <div className="mb-4">
-            <Label htmlFor="password" className="text-teal-800 text-sm">
+            <Label htmlFor="password" className="text-[#348493] text-sm">
               Confirm Password
             </Label>
             <Input
@@ -184,26 +184,26 @@ export default function Signup() {
           <Button
             type="button"
             onClick={handleSignUp}
-            className="w-full bg-teal-800 hover:bg-teal-900 mt-4"
+            className="w-full bg-[#348493] hover:bg-teal-900 mt-4"
           >
             Sign Up
           </Button>
         </form>
         <p className="mt-4 text-gray-500">or sign up with</p>
         <div className="flex space-x-4 mt-2">
-          <button className="border border-teal-700 p-2 w-20 h-12 rounded">
+          <button className="border border-[#348493] p-2 w-20 h-12 rounded">
             Google
           </button>
         </div>
         <p className="absolute bottom-10 left-4 mt-4 text-gray-500">
           Have an account?{" "}
-          <Link href="/auth/login" className="text-teal-700 underline">
+          <Link href="/auth/login" className="text-[#348493] underline">
             Log in
           </Link>
         </p>
       </div>
       {/* Right Side (Image/Graphic) */}
-      <div className="w-1/2 bg-teal-800 flex flex-col justify-center items-center text-white">
+      <div className=" flex-1 w-1/2 bg-[#348493] hidden md:flex flex-col justify-center items-center text-white">
         <img
           src="/tuna-background.jpg"
           alt="tuna"

@@ -119,8 +119,8 @@ export default function CatchDetailsPage() {
     }
 
     if (
-      !retailersUnassigned &&
-      !retailLocUnassigned &&
+      !retailersUnassigned ||
+      !retailLocUnassigned ||
       !consumersUnassigned &&
       userRole === "retailer"
     ) {
