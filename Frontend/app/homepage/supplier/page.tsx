@@ -28,15 +28,11 @@ export default function SupplierHomepage() {
     const loadTunaData = async () => {
       try {
         const data = await fetchAssets();
-        const filteredData = data.filter(
-          (tuna: TunaAsset) => !tuna.ID.startsWith("asset")
-        ); // remove id created by app gateway
+        const filteredData = data.filter((tuna : TunaAsset) => !tuna.ID.startsWith('asset')); // remove id created by app gateway
         setTunaData(filteredData);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch tuna data"
-        );
-        console.error("Error fetching tuna data:", err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch tuna data');
+        console.error('Error fetching tuna data:', err);
       } finally {
         setLoading(false);
       }
@@ -71,7 +67,7 @@ export default function SupplierHomepage() {
 
       <div className="flex justify-center my-6 gap-4">
         <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
-        <button className="bg-white text-cyan-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
+        <button className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
           <Filter size={18} /> Filter
         </button>
       </div>

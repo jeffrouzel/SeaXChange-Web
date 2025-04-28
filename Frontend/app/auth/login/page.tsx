@@ -53,7 +53,7 @@ export default function Login() {
       {/* ~~~~~ Left Column ~~~~~  */}
       <div className="w-1/2 flex flex-col bg-white p-6">
         {/* SeaXChange Logo */}
-        <h1 className="absolute top-10 left-10 text-2xl font-bold mb-6 text-cyan-700 flex items-center">
+        <h1 className="absolute top-10 left-10 text-2xl font-bold mb-6 text-teal-700 flex items-center">
           <img src="/tuna-logo.png" alt="SeaXChange" className="h-8 mr-2" />
           SeaXChange
         </h1>
@@ -66,7 +66,7 @@ export default function Login() {
           }}
         >
           <div className="mb-4">
-            <Label htmlFor="email" className="text-cyan-800 text-sm">
+            <Label htmlFor="email" className="text-teal-800 text-sm">
               Email
             </Label>
             <Input
@@ -80,7 +80,7 @@ export default function Login() {
           </div>
 
           <div className="mb-4">
-            <Label htmlFor="password" className="text-cyan-800 text-sm">
+            <Label htmlFor="password" className="text-teal-800 text-sm">
               Password
             </Label>
             <Input
@@ -94,7 +94,7 @@ export default function Login() {
           </div>
 
           <Button
-            className="w-full bg-cyan-800 hover:bg-cyan-900 mt-4"
+            className="w-full bg-teal-800 hover:bg-teal-900 mt-4"
             type="submit"
           >
             Log In
@@ -105,14 +105,14 @@ export default function Login() {
           )}
           <p className="text-center text-sm text-gray-600 mt-4">
             Don't have an account?{" "}
-            <Link href="/auth/signup" className="text-cyan-800 underline">
+            <Link href="/auth/signup" className="text-teal-800 underline">
               Sign up
             </Link>
           </p>
         </form>
       </div>
       {/* ~~~~~ Right Column ~~~~~  */}
-      <div className="w-1/2 bg-cyan-800 flex flex-col justify-center items-center text-white">
+      <div className="w-1/2 bg-teal-800 flex flex-col justify-center items-center text-white">
         <img
           src="/tuna-background.jpg"
           alt="tuna"
