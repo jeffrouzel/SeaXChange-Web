@@ -49,24 +49,24 @@ export default function Login() {
     }
   };
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen flex-row">
       {/* ~~~~~ Left Column ~~~~~  */}
-      <div className="w-1/2 flex flex-col bg-white p-6">
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-white p-6 relative">
         {/* SeaXChange Logo */}
-        <h1 className="absolute top-10 left-10 text-2xl font-bold mb-6 text-teal-700 flex items-center">
+        <h1 className="absolute top-10 left-10 text-2xl font-bold mb-6 md:mb-50 sm:mb-50 text-[#348493] flex items-center">
           <img src="/tuna-logo.png" alt="SeaXChange" className="h-8 mr-2" />
           SeaXChange
         </h1>
         {/* Input Login Details */}
         <form
-          className="w-full max-w-sm justify-center items-center mx-auto my-auto"
+          className="w-full max-w-sm mt-10"
           onSubmit={(e) => {
             e.preventDefault(); // prevents page reload
             handleLogin();
           }}
         >
           <div className="mb-4">
-            <Label htmlFor="email" className="text-teal-800 text-sm">
+            <Label htmlFor="email" className="text-[#348493] text-sm">
               Email
             </Label>
             <Input
@@ -80,7 +80,7 @@ export default function Login() {
           </div>
 
           <div className="mb-4">
-            <Label htmlFor="password" className="text-teal-800 text-sm">
+            <Label htmlFor="password" className="text-[#348493] text-sm">
               Password
             </Label>
             <Input
@@ -94,7 +94,7 @@ export default function Login() {
           </div>
 
           <Button
-            className="w-full bg-teal-800 hover:bg-teal-900 mt-4"
+            className="w-full bg-[#348493] hover:bg-teal-900 mt-4"
             type="submit"
           >
             Log In
@@ -105,14 +105,15 @@ export default function Login() {
           )}
           <p className="text-center text-sm text-gray-600 mt-4">
             Don't have an account?{" "}
-            <Link href="/auth/signup" className="text-teal-800 underline">
+            <Link href="/auth/signup" className="text-[#348493] underline">
               Sign up
             </Link>
           </p>
         </form>
       </div>
-      {/* ~~~~~ Right Column ~~~~~  */}
-      <div className="w-1/2 bg-teal-800 flex flex-col justify-center items-center text-white">
+
+      {/* ~~~~~ Right Column (Hide on mobile) ~~~~~ */}
+      <div className="hidden md:flex w-1/2 bg-[#348493] justify-center items-center text-white">
         <img
           src="/tuna-background.jpg"
           alt="tuna"

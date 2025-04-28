@@ -25,7 +25,7 @@ export default function ConsumerHomepage() {
     const loadTunaData = async () => {
       try {
         const data = await fetchAssets();
-        const filteredData = data.filter((tuna : TunaAsset) => !tuna.ID.startsWith('asset')); // remove id created by app gateway
+        const filteredData = data.filter((tuna : TunaAsset) => tuna.ID.startsWith('tuna')); // remove id created by app gateway
         setTunaData(filteredData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch tuna data');
