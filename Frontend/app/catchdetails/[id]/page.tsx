@@ -16,6 +16,12 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase.config";
 
+interface UserData {
+  customId: string;
+  name: string;
+  userType: string;
+}
+
 const extractName = (value: string): string => {
   const parts = value.split(':');
   return parts.length > 1 ? parts.slice(1).join(':').trim() : value;
@@ -37,6 +43,10 @@ export default function CatchDetailsPage() {
   );
   const [isSendCardOpen, setIsSendCardOpen] = useState(false);
   const [isDetailsSaved, setIsDetailsSaved] = useState(false);
+  const [editableFields, setEditableFields] = useState<string[]>([]);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
 
   const handleBack = () => {
     router.back();
@@ -46,51 +56,103 @@ export default function CatchDetailsPage() {
   const handleCloseSendCard = () => setIsSendCardOpen(false);
   const handleSaveDetails = () => setIsDetailsSaved(true);
 
-  const [editableFields, setEditableFields] = useState<string[]>([]);
+  const checkAssetAccess = (
+    asset: AssetDetails, 
+    userIdentifier: string, 
+    role: string
+  ): { hasAccess: boolean; accessType: 'full' | 'readonly' | 'none' } => {
+    // Check for full access first
+    switch (role.toLowerCase()) {
+      case 'fisher':
+        if (asset.Fisher === userIdentifier) {
+          return { hasAccess: true, accessType: 'full' };
+        }
+        break;
+      case 'supplier':
+        if (asset.Supplier === userIdentifier) {
+          return { hasAccess: true, accessType: 'full' };
+        }
+        break;
+      case 'retailer':
+        if (asset.Retailers?.includes(userIdentifier)) {
+          return { hasAccess: true, accessType: 'full' };
+        }
+        break;
+      case 'consumer':
+        if (asset.Consumers?.includes(userIdentifier)) {
+          return { hasAccess: true, accessType: 'full' };
+        }
+        break;
+    }
 
-  const [userRole, setUserRole] = useState<string | null>(null);
+    // If no full access, check if they can view
+    if (role.toLowerCase() === 'consumer') {
+      return { hasAccess: true, accessType: 'readonly' };
+    }
+
+    return { hasAccess: false, accessType: 'none' };
+  };
 
   useEffect(() => {
-    const loadAssetDetails = async () => {
+    const checkAccessAndLoadDetails = async () => {
       try {
-        const data = await fetchAssetById(assetId);
-        setAssetDetails(data);
-
+        setIsCheckingAccess(true);
         const auth = getAuth();
         const currentUser = auth.currentUser;
 
-        if (currentUser) {
-          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-          const role = userDoc.exists() ? userDoc.data().userType : null;
-
-          if (role) {
-            setUserRole(role);
-            const allowedFields = getEditableFieldsForRole(role);
-            setEditableFields(allowedFields);
-          }
+        if (!currentUser) {
+          router.push('/login');
+          return;
         }
-        setError(null);
+
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (!userDoc.exists()) {
+          throw new Error("User data not found");
+        }
+
+        const currentUserData = userDoc.data() as UserData;
+        const data = await fetchAssetById(assetId);
+        
+        // Check access before doing anything else
+        const userIdentifier = `${currentUserData.customId}:${currentUserData.name}`;
+        const access = checkAssetAccess(data, userIdentifier, currentUserData.userType);
+
+        // Immediately redirect if no access, before any state updates
+        if (access.accessType === 'none') {
+          router.replace(`/viewdetails/${assetId}`); // Using replace instead of push
+          return;
+        }
+
+        // Only proceed with state updates if user has access
+        setUserData(currentUserData);
+        setAssetDetails(data);
+        setUserRole(currentUserData.userType);
+        
+        if (access.accessType === 'full') {
+          const allowedFields = getEditableFieldsForRole(currentUserData.userType);
+          setEditableFields(allowedFields);
+        } else {
+          setEditableFields([]);
+        }
+
       } catch (err) {
         setError({
-          message:
-            err instanceof Error
-              ? err.message
-              : "Failed to fetch asset details",
+          message: err instanceof Error ? err.message : "Failed to fetch asset details",
           details: err,
         });
         setAssetDetails(null);
       } finally {
+        setIsCheckingAccess(false);
         setLoading(false);
       }
     };
 
-    loadAssetDetails();
-  }, [assetId]);
+    checkAccessAndLoadDetails();
+  }, [assetId, router]);
 
-  // For access based features on shared catch table
   const canEditAndSave = () => {
-    if (!assetDetails || !userRole) return false;
-
+    if (!assetDetails || !userRole || editableFields.length === 0) return false;
+    
     const supplierUnassigned = !assetDetails.Supplier;
     const supplierLocUnassigned = !assetDetails.SellingLocationSupplier;
     const retailersUnassigned = !assetDetails.Retailers?.length;
@@ -130,10 +192,17 @@ export default function CatchDetailsPage() {
     return false;
   };
 
-  if (loading) {
+  // Show loading screen while checking access
+  if (isCheckingAccess || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-lg">Loading asset details...</p>
+      <div className="min-h-screen flex flex-col bg-white">
+        <HomepageHeader title="Catch Details" />
+        <main className="flex-1 bg-[#429FAD] flex items-center justify-center">
+          <div className="bg-white px-6 py-4 shadow-md rounded-md flex flex-col items-center gap-2">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-700"></div>
+            <p className="text-lg font-medium text-teal-700">Checking access...</p>
+          </div>
+        </main>
       </div>
     );
   }
@@ -156,7 +225,6 @@ export default function CatchDetailsPage() {
   const formattedDetails = assetDetails
     ? [
         { label: "Species", value: assetDetails.Species },
-        // { label: "Weight (kg)", value: assetDetails.Weight.toString() },
         { label: "Catch Location", value: assetDetails.CatchLocation },
         { label: "Catch Date", value: assetDetails.CatchDate },
         { label: "Fishing Method", value: assetDetails.FishingMethod },
@@ -166,7 +234,6 @@ export default function CatchDetailsPage() {
         { label: "Retailers", value: extractNamesFromArray(assetDetails.Retailers).map((name, i) => <div key={i}>{name}</div>) || "Not assigned" },
         { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.map((loc, i) => <div key={i}>{loc}</div>) || "Not assigned" },
         { label: "Consumers", value: extractNamesFromArray(assetDetails.Consumers).map((name, i) => <div key={i}>{name}</div>) || "Not assigned" }
-
       ]
     : [];
 
@@ -207,11 +274,6 @@ export default function CatchDetailsPage() {
               Send Tuna
             </Button>
           )}
-          {/* {isDetailsSaved && (
-            <Button variant="outline" onClick={handleOpenSendCard}>
-              Send Tuna
-            </Button>
-          )} */}
           <div />
         </div>
       </main>

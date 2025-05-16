@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import CatchDetailsTable from "@/components/CatchTable";
 import { fetchAssetById, type AssetDetails } from "@/lib/api";
-// import { useRouter } from 'next/router';
+import { getAuth } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase.config";
 
 const extractName = (value: string): string => {
   const parts = value.split(':');
@@ -24,13 +26,41 @@ export default function CatchDetailsPage() {
   const params = useParams();
   const assetId = params.id as string;
   
+  const [userType, setUserType] = useState<string | null>(null);
   const [assetDetails, setAssetDetails] = useState<AssetDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<{message: string; details?: any} | null>(null);
 
   const handleBack = () => { 
-    router.back(); // Navigate back to the previous page
-   };
+    if (userType) {
+      router.push(`/homepage/${userType}`);
+    } else {
+      router.push('/'); // Fallback to home if userType is not available
+    }
+  };
+
+  useEffect(() => {
+    const getUserType = async () => {
+      try {
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+
+        if (!currentUser) {
+          router.push('/login');
+          return;
+        }
+
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists()) {
+          setUserType(userDoc.data().userType);
+        }
+      } catch (err) {
+        console.error("Error fetching user type:", err);
+      }
+    };
+
+    getUserType();
+  }, []);
 
   useEffect(() => {
     const loadAssetDetails = async () => {
