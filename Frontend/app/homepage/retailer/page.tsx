@@ -63,7 +63,7 @@ export default function RetailerHomepage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#429FAD] p-6">
+    <div className="min-h-screen bg-gradient-to-b from-[#429FAD] via-[#57acb9] to-[#6fc0cc] p-6">
       <HomepageHeader title="Retailer's Homepage" />
 
       <div className="flex justify-center my-6 gap-4">

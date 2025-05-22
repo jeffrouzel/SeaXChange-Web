@@ -28,9 +28,7 @@ export default function FisherHomepage() {
       try {
         const data = await fetchAssets();
         // Filter assets for the current fisher (you might want to adjust this logic)
-        const filteredData = data.filter(
-          (tuna: TunaAsset) => !tuna.ID.startsWith("asset")
-        ); // remove id created by app gateway
+        const filteredData = data.filter((tuna : TunaAsset) => tuna.ID.startsWith('tuna'));  // remove id created by app gateway
         setTunaData(filteredData);
       } catch (err) {
         setError(
@@ -67,7 +65,7 @@ export default function FisherHomepage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#429FAD] p-6">
+    <div className="min-h-screen bg-gradient-to-b from-[#429FAD] via-[#57acb9] to-[#6fc0cc] p-6">
       <HomepageHeader title="Fisher's Homepage" />
 
       <div className="flex justify-center my-6 gap-4">

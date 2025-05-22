@@ -4,6 +4,7 @@ import { useState, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check } from "lucide-react";
 import { usePathname } from "next/navigation";
+import SearchableDropdown from './ui/SearchableDropdown';
 
 type AssetDetail = {
   label: string;
@@ -83,6 +84,14 @@ export default function CatchDetailsTable({
                   }
                   onBlur={handleSave}
                   className="border p-1 rounded"
+                />
+              ) : item.label === "Species" ? (
+                <SearchableDropdown
+                  value={editedValues[item.label]}
+                  onChange={(newValue) => 
+                    handleInputChange(item.label, newValue)
+                  }
+                  placeholder="Search or select species..."
                 />
               ) : (
                 <input
