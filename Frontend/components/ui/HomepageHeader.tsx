@@ -77,7 +77,7 @@ const HomepageHeader: React.FC<HomepageHeaderProps> = ({ title }) => {
         </div>
         
         {/* Page Title */}
-        <div className="text-right md:text-center lg:text-center flex-1">
+        <div className="text-right md:text-center pl-16 lg:text-center flex-1">
           <h1 className="text-sm md:text-xl lg:text-xl font-semibold text-teal-700">
             {title}
           </h1>
@@ -87,14 +87,14 @@ const HomepageHeader: React.FC<HomepageHeaderProps> = ({ title }) => {
         <div className="hidden md:flex gap-4 items-center">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="flex items-center gap-2 text-gray-700 hover:text-teal-700">
-                <User size={18} /> Profile
+              <button className="flex items-center gap-2 font-semibold text-teal-700 hover:text-[#429FAD]">
+                <User size={20} /> Profile
               </button>
             </PopoverTrigger>
             <ProfileContent />
           </Popover>
           <button
-            className="flex items-center gap-2 text-gray-700 hover:text-red-600"
+            className="flex items-center gap-2 font-semibold text-red-600 hover:text-red-400"
             onClick={handleSignOutClick}
           >
             <LogOut size={18} /> Sign Out

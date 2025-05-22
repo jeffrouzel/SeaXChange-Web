@@ -42,7 +42,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-white">
       <HomepageHeader title="Catch Records" />
       <main className="container mx-auto p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pr-10">
           {assets.map((asset) => (
             <Link 
               key={asset.ID} 
