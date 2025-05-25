@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PopoverContent } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
-import { getAuth } from "firebase/auth";
+import { onAuthStateChanged, getAuth, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase.config";
 
@@ -19,23 +19,23 @@ const ProfileContent = () => {
   const auth = getAuth();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) return;
+    const auth = getAuth();
 
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          setUserData(userDoc.data() as UserData);
+    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setUserData(userDoc.data() as UserData);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
       }
-    };
+      setLoading(false);
+    });
 
-    fetchUserData();
+    return () => unsubscribe(); // Cleanup listener
   }, []);
 
   if (loading) {
@@ -59,17 +59,23 @@ const ProfileContent = () => {
         <div className="grid gap-2">
           <div className="grid grid-cols-3 items-center gap-4">
             <Label htmlFor="name">Name:</Label>
-            <p>{userData?.name || 'Not available'}</p>
+            <p>{userData?.name || "Not available"}</p>
           </div>
 
           <div className="grid grid-cols-3 items-center gap-4">
             <Label htmlFor="role">Role:</Label>
-            <p>{userData?.userType ? capitalizeFirstLetter(userData.userType) : 'Not available'}</p>
+            <p>
+              {userData?.userType
+                ? capitalizeFirstLetter(userData.userType)
+                : "Not available"}
+            </p>
           </div>
 
           <div className="grid grid-cols-3 items-center gap-4">
             <Label htmlFor="id">User ID:</Label>
-            <p className="text-sm truncate">{userData?.customId || auth.currentUser?.uid || 'Not available'}</p>
+            <p className="text-sm truncate">
+              {userData?.customId || auth.currentUser?.uid || "Not available"}
+            </p>
           </div>
         </div>
       </div>
