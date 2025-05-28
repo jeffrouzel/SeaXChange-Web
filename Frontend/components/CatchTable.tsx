@@ -6,9 +6,10 @@ import { Pencil, Check } from "lucide-react";
 import { usePathname } from "next/navigation";
 import SearchableDropdown from './ui/SearchableDropdown';
 
-type AssetDetail = {
+interface AssetDetail {
   label: string;
-  value: string| ReactNode | ReactNode[]; // this will be used as a placeholder
+  value: string | ReactNode | ReactNode[];
+  readOnly?: boolean; // Add this property
 };
 
 type CatchDetailsTableProps = {
@@ -123,7 +124,7 @@ export default function CatchDetailsTable({
             </div>
             )}
 
-            {isAddCatchPage && editableFields.includes(item.label) && (
+            {isAddCatchPage && editableFields.includes(item.label) && !item.readOnly && (
               <Button
                 variant="ghost"
                 size="icon"

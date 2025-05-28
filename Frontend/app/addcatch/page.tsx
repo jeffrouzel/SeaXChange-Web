@@ -84,11 +84,18 @@ export default function NewCatchPage() {
     getRoleEditableFields();
   }, []);
 
+  // Add this useEffect to fetch and set fisher details
   useEffect(() => {
     const setFisherDetails = async () => {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-      if (currentUser) {
+      try {
+        const auth = getAuth();
+        const currentUser = auth.currentUser;
+        
+        if (!currentUser) {
+          router.push('/login');
+          return;
+        }
+
         const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
@@ -98,6 +105,8 @@ export default function NewCatchPage() {
             Fisher: fisherFormat
           }));
         }
+      } catch (error) {
+        console.error("Error setting fisher details:", error);
       }
     };
 
@@ -137,19 +146,19 @@ export default function NewCatchPage() {
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <CatchDetailsTable
               assetDetails={[
-                { label: "ID", value: "Enter ID" },
-                { label: "Species", value: "Set Species" },
-                { label: "Catch Location", value: "Enter Location" },
-                { label: "Catch Date", value: "Select Date" },
-                { label: "Fishing Method", value: "Describe Method" },
-                { label: "Fisher", value: "Enter Fisher Name" },
+                { label: "ID", value: newAsset.ID || "Enter ID" },
+                { label: "Species", value: newAsset.Species || "Set Species" },
+                { label: "Catch Location", value: newAsset.CatchLocation || "Enter Location" },
+                { label: "Catch Date", value: newAsset.CatchDate || "Select Date" },
+                { label: "Fishing Method", value: newAsset.FishingMethod || "Describe Method" },
+                { label: "Fisher", value: newAsset.Fisher || "Loading...", readOnly: true }, // Added readOnly
                 { label: "Supplier", value: "NA" },
                 { label: "Supplier Location", value: "NA" },
                 { label: "Retailer", value: "NA" },
                 { label: "Retailer Location", value: "NA" },
                 { label: "Consumer", value: "NA" },
               ]}
-              editableFields={["ID", "Species", "Catch Location", "Catch Date", "Fishing Method", "Fisher"]}
+              editableFields={["ID", "Species", "Catch Location", "Catch Date", "Fishing Method"]} // Removed Fisher
               onChange={(updates) =>
                 setNewAsset((prevAsset) => ({
                   ...prevAsset,
