@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import HomepageHeader from "@/components/ui/HomepageHeader";
 import SearchBar from "@/components/ui/SearchBar";
 import TunaCard from "@/components/ui/TunaCard";
-import { Plus } from "lucide-react";
+import { Plus, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { fetchAssets } from "@/lib/api";
 
@@ -17,11 +17,15 @@ interface TunaAsset {
   Fisher: string;
 }
 
+type SortType = 'date' | 'id';
+
 export default function FisherHomepage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [tunaData, setTunaData] = useState<TunaAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortType, setSortType] = useState<SortType>('date');
+  const [showSortOptions, setShowSortOptions] = useState(false);
 
   useEffect(() => {
     const loadTunaData = async () => {
@@ -43,10 +47,29 @@ export default function FisherHomepage() {
     loadTunaData();
   }, []);
 
-  // Filter tuna data based on search query
-  const filteredTunaData = tunaData.filter((tuna) =>
-    tuna.ID.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Update the filtering and sorting logic
+  const filteredTunaData = tunaData
+    .filter((tuna) =>
+      tuna.ID.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortType === 'date') {
+        const dateA = new Date(a.CatchDate).getTime();
+        const dateB = new Date(b.CatchDate).getTime();
+        return dateB - dateA;
+      } else {
+        // Extract numeric part from ID and compare
+        const idA = parseInt(a.ID.replace(/\D/g, '')) || 0;
+        const idB = parseInt(b.ID.replace(/\D/g, '')) || 0;
+        return idB - idA;
+      }
+    });
+
+  // Add this function to handle sort type changes
+  const handleSortChange = (newSortType: SortType) => {
+    setSortType(newSortType);
+    setShowSortOptions(false);
+  };
 
   if (loading) {
     return (
@@ -70,6 +93,35 @@ export default function FisherHomepage() {
 
       <div className="flex justify-center my-6 gap-4">
         <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
+        
+        {/* Add Sort Button */}
+        <div className="relative">
+          <button
+            onClick={() => setShowSortOptions(!showSortOptions)}
+            className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100"
+          >
+            Sort by {sortType === 'date' ? 'Date' : 'ID'}
+            <ChevronDown size={18} />
+          </button>
+          
+          {showSortOptions && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
+              <button
+                onClick={() => handleSortChange('date')}
+                className="w-full text-left px-4 py-2 hover:bg-teal-100 rounded-t-lg"
+              >
+                Sort by Date
+              </button>
+              <button
+                onClick={() => handleSortChange('id')}
+                className="w-full text-left px-4 py-2 hover:bg-teal-100 rounded-b-lg"
+              >
+                Sort by ID
+              </button>
+            </div>
+          )}
+        </div>
+
         <Link href="/addcatch">
           <button className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100">
             <Plus size={18} /> ADD CATCH
