@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import WarningAlert from "@/components/WarningAlert";
+import AuthAlert from "@/components/AuthAlerts";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -19,11 +19,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const [autherror, setAuthError] = useState("Login Error");
 
   const handleLogin = async () => {
     if (!email || !password) {
+      setAuthError("Missing Fields");
       setError("Please fill in all fields!");
       setOpen(true);
+      if (email && !password) {
+        setError("Please enter your password.");
+      }
       return false;
     }
 
@@ -37,15 +42,33 @@ export default function Login() {
         if (userType) {
           router.push(`/homepage/${userType}`);
         } else {
-          router.push("/auth/signup-roles");
+          router.push("/auth/signup");
         }
       } else {
         setError("User not found. Please sign-up.");
         setOpen(true);
-        router.push("/auth/signup-roles");
+        setTimeout(() => {
+          router.push("/auth/signup-roles");
+        }, 2000);
       }
     } catch (err: any) {
       console.error(err.message);
+      setAuthError("Login Error");
+      if (err.code === "auth/user-not-found") {
+        setError("User not found. Please sign-up.");
+        setTimeout(() => {
+          router.push("/auth/signup-roles");
+        }, 2000);
+      } else if (err.code === "auth/invalid-credential") {
+        setError("Incorrect password. Please try again.");
+      } else if (err.code === "auth/invalid-email") {
+        setError("Invalid email format.");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Too many failed attempts. Please try again later.");
+      } else {
+        setError("Unexpected error: " + err.code);
+      }
+      setOpen(true);
     }
   };
   return (
@@ -101,7 +124,12 @@ export default function Login() {
           </Button>
 
           {error && (
-            <WarningAlert message={error} open={open} onOpenChange={setOpen} />
+            <AuthAlert
+              title={autherror}
+              message={error}
+              open={open}
+              onOpenChange={setOpen}
+            />
           )}
           <p className="text-center text-sm text-gray-600 mt-4">
             Don't have an account?{" "}
