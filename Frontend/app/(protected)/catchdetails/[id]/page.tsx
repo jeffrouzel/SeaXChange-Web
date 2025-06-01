@@ -230,23 +230,61 @@ export default function CatchDetailsPage() {
     );
   }
 
+  // Add this label mapping object at the top of your component
+  const labelTranslations: { [key: string]: string } = {
+    Species: "Klase sang Isda (Species)",
+    "Catch Location": "Lugar kung Diin Gindakop (Catch Location)",
+    "Catch Date": "Petsa sang Pagdakop (Catch Date)",
+    "Fishing Method": "Pama agi sang Pangisda (Fishing Method)",
+    Fisher: "Fisher",
+    Supplier: "Supplier",
+    "Supplier Location": "Supplier Location",
+    Retailers: "Vendor (Retailer)",
+    "Retail Locations": "Retailer Location",
+    Consumers: "Customer (Consumer)",
+  };
+
+  // Update the formattedDetails array to include displayLabel
   const formattedDetails = assetDetails
     ? [
-        { label: "Species", value: assetDetails.Species },
-        { label: "Catch Location", value: assetDetails.CatchLocation },
-        { label: "Catch Date", value: assetDetails.CatchDate },
-        { label: "Fishing Method", value: assetDetails.FishingMethod },
-        { label: "Fisher", value: extractName(assetDetails.Fisher) },
+        {
+          label: "Species",
+          displayLabel: labelTranslations["Species"],
+          value: assetDetails.Species,
+        },
+        {
+          label: "Catch Location",
+          displayLabel: labelTranslations["Catch Location"],
+          value: assetDetails.CatchLocation,
+        },
+        {
+          label: "Catch Date",
+          displayLabel: labelTranslations["Catch Date"],
+          value: assetDetails.CatchDate,
+        },
+        {
+          label: "Fishing Method",
+          displayLabel: labelTranslations["Fishing Method"],
+          value: assetDetails.FishingMethod,
+        },
+        {
+          label: "Fisher",
+          displayLabel: labelTranslations["Fisher"],
+          value: extractName(assetDetails.Fisher),
+        },
         {
           label: "Supplier",
+          displayLabel: labelTranslations["Supplier"],
           value: extractName(assetDetails.Supplier || "Not assigned"),
         },
         {
           label: "Supplier Location",
+          displayLabel: labelTranslations["Supplier Location"],
           value: assetDetails.SellingLocationSupplier || "Not assigned",
         },
         {
           label: "Retailers",
+          displayLabel: labelTranslations["Retailers"],
           value:
             extractNamesFromArray(assetDetails.Retailers).map((name, i) => (
               <div key={i}>{name}</div>
@@ -254,13 +292,14 @@ export default function CatchDetailsPage() {
         },
         {
           label: "Retail Locations",
-          value:
-            assetDetails.SellingLocationRetailers.map((loc, i) => (
-              <div key={i}>{loc}</div>
-            )) || "Not assigned",
+          displayLabel: labelTranslations["Retail Locations"],
+          value: assetDetails.SellingLocationRetailers.map((loc, i) => (
+            <div key={i}>{loc}</div>
+          )) || "Not assigned",
         },
         {
           label: "Consumers",
+          displayLabel: labelTranslations["Consumers"],
           value:
             extractNamesFromArray(assetDetails.Consumers).map((name, i) => (
               <div key={i}>{name}</div>

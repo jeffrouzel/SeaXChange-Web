@@ -6,10 +6,11 @@ import { Pencil, Check } from "lucide-react";
 import { usePathname } from "next/navigation";
 import SearchableDropdown from './ui/SearchableDropdown';
 
-interface AssetDetail {
+type AssetDetail = {
   label: string;
+  displayLabel: string; // Add this new property
   value: string | ReactNode | ReactNode[];
-  readOnly?: boolean; // Add this property
+  readOnly?: boolean;
 };
 
 type CatchDetailsTableProps = {
@@ -72,7 +73,7 @@ export default function CatchDetailsTable({
           key={index}
           className="flex justify-between items-center border-b last:border-b-0 px-4 py-3"
         >
-          <span className="font-medium">{item.label}</span>
+          <span className="font-medium">{item.displayLabel}</span>
           <div className="flex items-center gap-2">
             {isAddCatchPage && editingField === item.label ? (
               item.label === "Catch Date" ? (
