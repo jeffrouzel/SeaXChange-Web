@@ -147,16 +147,16 @@ export default function NewCatchPage() {
           <CatchDetailsTable
               assetDetails={[
                 { label: "ID", value: newAsset.ID || "Enter ID" },
-                { label: "Species", value: newAsset.Species || "Set Species" },
-                { label: "Catch Location", value: newAsset.CatchLocation || "Enter Location" },
-                { label: "Catch Date", value: newAsset.CatchDate || "Select Date" },
-                { label: "Fishing Method", value: newAsset.FishingMethod || "Describe Method" },
+                { label: "Klase sang Isda (Species)", value: newAsset.Species || "Set Species" },
+                { label: "Lugar kung Diin Gindakop (Catch Location)", value: newAsset.CatchLocation || "Enter Location" },
+                { label: "Petsa sang Pagdakop (Catch Date)", value: newAsset.CatchDate || "Select Date" },
+                { label: "Pama agi sang Pangisda (Fishing Method)", value: newAsset.FishingMethod || "Describe Method" },
                 { label: "Fisher", value: newAsset.Fisher || "Loading...", readOnly: true }, // Added readOnly
                 { label: "Supplier", value: "NA" },
                 { label: "Supplier Location", value: "NA" },
-                { label: "Retailer", value: "NA" },
+                { label: "Vendor (Retailer)", value: "NA" },
                 { label: "Retailer Location", value: "NA" },
-                { label: "Consumer", value: "NA" },
+                { label: "Customer (Consumer)", value: "NA" },
               ]}
               editableFields={["ID", "Species", "Catch Location", "Catch Date", "Fishing Method"]} // Removed Fisher
               onChange={(updates) =>
