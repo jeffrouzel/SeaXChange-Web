@@ -5,12 +5,19 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import WarningAlert from "@/components/WarningAlert";
+import AuthAlert from "@/components/AuthAlerts";
 
 import { useState } from "react";
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, getDocs, query, collection, where } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDocs,
+  query,
+  collection,
+  where,
+} from "firebase/firestore";
 import { auth, db } from "@/firebase.config";
 
 function generateCustomId(): string {
@@ -22,7 +29,7 @@ async function generateUniqueCustomId(): Promise<string> {
   const querySnapshot = await getDocs(
     query(collection(db, "users"), where("customId", "==", customId))
   );
-  
+
   if (querySnapshot.empty) {
     return customId;
   }
@@ -38,40 +45,48 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [authError, setAuthError] = useState("Sign Up Error");
   const [open, setOpen] = useState(false);
 
   const verifySignUp = () => {
     if (!name || !email || !password || !confirmPassword) {
+      setAuthError("Missing Fields");
       setError("Please fill in all fields!");
       setOpen(true);
       return false;
     }
     if (password !== confirmPassword) {
+      setAuthError("Password Mismatch");
       setError("Passwords do not match!");
       setOpen(true);
       return false;
     }
     if (password.length < 6) {
+      setAuthError("Weak Password");
       setError("Password must be at least 6 characters long!");
       setOpen(true);
       return false;
     }
     if (!/(?=.*\d)/.test(password)) {
+      setAuthError("Weak Password");
       setError("Password should contain atleast 1 number.");
       setOpen(true);
       return false;
     }
     if (!/(?=.*[a-z])/.test(password)) {
+      setAuthError("Weak Password");
       setError("Password should contain atleast 1 lowercase letter.");
       setOpen(true);
       return false;
     }
     if (!/(?=.*[A-Z])/.test(password)) {
+      setAuthError("Weak Password");
       setError("Password should contain atleast 1 uppercase letter.");
       setOpen(true);
       return false;
     }
     if (!/(?=.*[!@#$%^&*])/.test(password)) {
+      setAuthError("Weak Password");
       setError("Password should contain atleast 1 special character.");
       setOpen(true);
       return false;
@@ -83,7 +98,11 @@ export default function Signup() {
   const handleSignUp = async () => {
     try {
       if (!verifySignUp()) return;
-      const response = await createUserWithEmailAndPassword(auth, email, password);
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
       const customId = await generateUniqueCustomId();
       const userDoc: {
@@ -107,8 +126,18 @@ export default function Signup() {
 
       router.push("/auth/signup-roles");
     } catch (err: any) {
-      console.error(err.message);
-      setError(err.message);
+      console.error("Signup error:", err.code, err.message);
+      setAuthError("Signup Error");
+
+      if (err.code === "auth/email-already-in-use") {
+        setError("This email is already registered.");
+      } else if (err.code === "auth/invalid-email") {
+        setError("Please enter a valid email address.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
+
+      setOpen(true); // trigger the alert
     }
   };
 
@@ -176,7 +205,12 @@ export default function Signup() {
           </div>
 
           {error && (
-            <WarningAlert message={error} open={open} onOpenChange={setOpen} />
+            <AuthAlert
+              title={authError}
+              message={error}
+              open={open}
+              onOpenChange={setOpen}
+            />
           )}
           {/* <Button className="w-full bg-teal-800 hover:bg-teal-900 mt-4">
             Sign Up
