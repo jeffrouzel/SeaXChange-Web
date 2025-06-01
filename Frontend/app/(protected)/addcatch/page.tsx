@@ -13,7 +13,7 @@ import { getEditableFieldsForRole } from "@/lib/editableFieldsByRole";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase.config";
-import { createAsset } from "@/lib/api"; // Adjust the import path as necessary
+import { createAsset, getHighestTunaId } from "@/lib/api"; // Adjust the import path as necessary
 
 export default function NewCatchPage() {
   const router = useRouter();
@@ -113,6 +113,24 @@ export default function NewCatchPage() {
     setFisherDetails();
   }, []);
 
+  // Add this useEffect to set the initial ID
+  useEffect(() => {
+    const generateTunaId = async () => {
+      try {
+        const highestId = await getHighestTunaId();
+        const newId = `tuna${highestId + 1}`;
+        setNewAsset(prev => ({
+          ...prev,
+          ID: newId
+        }));
+      } catch (error) {
+        console.error('Error generating tuna ID:', error);
+      }
+    };
+
+    generateTunaId();
+  }, []);
+
   const labelTranslations: { [key: string]: string } = {
     "ID": "ID",
     "Species": "Klase sang Isda (Species)",
@@ -163,7 +181,8 @@ export default function NewCatchPage() {
                 { 
                   label: "ID", 
                   displayLabel: labelTranslations["ID"],
-                  value: newAsset.ID || "Enter ID" 
+                  value: newAsset.ID || "Generating ID...",
+                  readOnly: true  // Add this line
                 },
                 { 
                   label: "Species", 
@@ -207,7 +226,7 @@ export default function NewCatchPage() {
                   displayLabel: labelTranslations["Consumer"],
                   value: "NA" },
               ]}
-              editableFields={["ID", "Species", "Catch Location", "Catch Date", "Fishing Method"]}
+              editableFields={["Species", "Catch Location", "Catch Date", "Fishing Method"]} // Remove ID from editable fields
               onChange={(updates) =>
                 setNewAsset((prevAsset) => ({
                   ...prevAsset,

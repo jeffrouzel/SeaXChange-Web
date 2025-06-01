@@ -156,3 +156,21 @@ export const transferAsset = async (assetData: {
     throw error;
   }
 };
+
+// Add this function to your api.ts
+export const getHighestTunaId = async (): Promise<number> => {
+  try {
+    const assets = await fetchAssets();
+    const tunaIds = assets
+      .filter((asset: any) => asset.ID.startsWith('tuna'))
+      .map((asset: any) => {
+        const num = parseInt(asset.ID.replace('tuna', ''));
+        return isNaN(num) ? 0 : num;
+      });
+    
+    return tunaIds.length > 0 ? Math.max(...tunaIds) : 0;
+  } catch (error) {
+    console.error('Error getting highest tuna ID:', error);
+    return 0;
+  }
+};
