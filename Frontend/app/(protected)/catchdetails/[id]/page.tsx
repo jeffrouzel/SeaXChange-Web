@@ -7,7 +7,6 @@ import { Pencil, ArrowLeft } from "lucide-react";
 import SendCard from "@/components/ui/SendCard";
 import CatchDetailsTable from "@/components/CatchTable";
 import SaveAlert from "@/components/SaveAlert";
-import SendAlert from "@/components/SendAlert";
 import HomepageHeader from "@/components/ui/HomepageHeader";
 import { fetchAssetById, type AssetDetails } from "@/lib/api";
 
@@ -23,8 +22,8 @@ interface UserData {
 }
 
 const extractName = (value: string): string => {
-  const parts = value.split(':');
-  return parts.length > 1 ? parts.slice(1).join(':').trim() : value;
+  const parts = value.split(":");
+  return parts.length > 1 ? parts.slice(1).join(":").trim() : value;
 };
 
 const extractNamesFromArray = (values: string[] = []): string[] => {
@@ -57,40 +56,40 @@ export default function CatchDetailsPage() {
   const handleSaveDetails = () => setIsDetailsSaved(true);
 
   const checkAssetAccess = (
-    asset: AssetDetails, 
-    userIdentifier: string, 
+    asset: AssetDetails,
+    userIdentifier: string,
     role: string
-  ): { hasAccess: boolean; accessType: 'full' | 'readonly' | 'none' } => {
+  ): { hasAccess: boolean; accessType: "full" | "readonly" | "none" } => {
     // Check for full access first
     switch (role.toLowerCase()) {
-      case 'fisher':
+      case "fisher":
         if (asset.Fisher === userIdentifier) {
-          return { hasAccess: true, accessType: 'full' };
+          return { hasAccess: true, accessType: "full" };
         }
         break;
-      case 'supplier':
+      case "supplier":
         if (asset.Supplier === userIdentifier) {
-          return { hasAccess: true, accessType: 'full' };
+          return { hasAccess: true, accessType: "full" };
         }
         break;
-      case 'retailer':
+      case "retailer":
         if (asset.Retailers?.includes(userIdentifier)) {
-          return { hasAccess: true, accessType: 'full' };
+          return { hasAccess: true, accessType: "full" };
         }
         break;
-      case 'consumer':
+      case "consumer":
         if (asset.Consumers?.includes(userIdentifier)) {
-          return { hasAccess: true, accessType: 'full' };
+          return { hasAccess: true, accessType: "full" };
         }
         break;
     }
 
     // If no full access, check if they can view
-    if (role.toLowerCase() === 'consumer') {
-      return { hasAccess: true, accessType: 'readonly' };
+    if (role.toLowerCase() === "consumer") {
+      return { hasAccess: true, accessType: "readonly" };
     }
 
-    return { hasAccess: false, accessType: 'none' };
+    return { hasAccess: false, accessType: "none" };
   };
 
   useEffect(() => {
@@ -101,7 +100,7 @@ export default function CatchDetailsPage() {
         const currentUser = auth.currentUser;
 
         if (!currentUser) {
-          router.push('/login');
+          router.push("/login");
           return;
         }
 
@@ -112,13 +111,17 @@ export default function CatchDetailsPage() {
 
         const currentUserData = userDoc.data() as UserData;
         const data = await fetchAssetById(assetId);
-        
+
         // Check access before doing anything else
         const userIdentifier = `${currentUserData.customId}:${currentUserData.name}`;
-        const access = checkAssetAccess(data, userIdentifier, currentUserData.userType);
+        const access = checkAssetAccess(
+          data,
+          userIdentifier,
+          currentUserData.userType
+        );
 
         // Immediately redirect if no access, before any state updates
-        if (access.accessType === 'none') {
+        if (access.accessType === "none") {
           router.replace(`/viewdetails/${assetId}`); // Using replace instead of push
           return;
         }
@@ -127,17 +130,21 @@ export default function CatchDetailsPage() {
         setUserData(currentUserData);
         setAssetDetails(data);
         setUserRole(currentUserData.userType);
-        
-        if (access.accessType === 'full') {
-          const allowedFields = getEditableFieldsForRole(currentUserData.userType);
+
+        if (access.accessType === "full") {
+          const allowedFields = getEditableFieldsForRole(
+            currentUserData.userType
+          );
           setEditableFields(allowedFields);
         } else {
           setEditableFields([]);
         }
-
       } catch (err) {
         setError({
-          message: err instanceof Error ? err.message : "Failed to fetch asset details",
+          message:
+            err instanceof Error
+              ? err.message
+              : "Failed to fetch asset details",
           details: err,
         });
         setAssetDetails(null);
@@ -152,7 +159,7 @@ export default function CatchDetailsPage() {
 
   const canEditAndSave = () => {
     if (!assetDetails || !userRole || editableFields.length === 0) return false;
-    
+
     const supplierUnassigned = !assetDetails.Supplier;
     const supplierLocUnassigned = !assetDetails.SellingLocationSupplier;
     const retailersUnassigned = !assetDetails.Retailers?.length;
@@ -183,8 +190,7 @@ export default function CatchDetailsPage() {
     if (
       !retailersUnassigned ||
       !retailLocUnassigned ||
-      !consumersUnassigned &&
-      userRole === "retailer"
+      (!consumersUnassigned && userRole === "retailer")
     ) {
       return true;
     }
@@ -200,7 +206,9 @@ export default function CatchDetailsPage() {
         <main className="flex-1 bg-[#429FAD] flex items-center justify-center">
           <div className="bg-white px-6 py-4 shadow-md rounded-md flex flex-col items-center gap-2">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-700"></div>
-            <p className="text-lg font-medium text-teal-700">Checking access...</p>
+            <p className="text-lg font-medium text-teal-700">
+              Checking access...
+            </p>
           </div>
         </main>
       </div>
@@ -229,11 +237,35 @@ export default function CatchDetailsPage() {
         { label: "Catch Date", value: assetDetails.CatchDate },
         { label: "Fishing Method", value: assetDetails.FishingMethod },
         { label: "Fisher", value: extractName(assetDetails.Fisher) },
-        { label: "Supplier", value: extractName(assetDetails.Supplier || "Not assigned") },
-        { label: "Supplier Location", value: assetDetails.SellingLocationSupplier || "Not assigned" },
-        { label: "Retailers", value: extractNamesFromArray(assetDetails.Retailers).map((name, i) => <div key={i}>{name}</div>) || "Not assigned" },
-        { label: "Retail Locations", value: assetDetails.SellingLocationRetailers.map((loc, i) => <div key={i}>{loc}</div>) || "Not assigned" },
-        { label: "Consumers", value: extractNamesFromArray(assetDetails.Consumers).map((name, i) => <div key={i}>{name}</div>) || "Not assigned" }
+        {
+          label: "Supplier",
+          value: extractName(assetDetails.Supplier || "Not assigned"),
+        },
+        {
+          label: "Supplier Location",
+          value: assetDetails.SellingLocationSupplier || "Not assigned",
+        },
+        {
+          label: "Retailers",
+          value:
+            extractNamesFromArray(assetDetails.Retailers).map((name, i) => (
+              <div key={i}>{name}</div>
+            )) || "Not assigned",
+        },
+        {
+          label: "Retail Locations",
+          value:
+            assetDetails.SellingLocationRetailers.map((loc, i) => (
+              <div key={i}>{loc}</div>
+            )) || "Not assigned",
+        },
+        {
+          label: "Consumers",
+          value:
+            extractNamesFromArray(assetDetails.Consumers).map((name, i) => (
+              <div key={i}>{name}</div>
+            )) || "Not assigned",
+        },
       ]
     : [];
 
@@ -246,7 +278,9 @@ export default function CatchDetailsPage() {
             <ArrowLeft className="text-white" />
           </Button>
           <div className="bg-white px-6 py-2 shadow-md rounded-md">
-            <span className="font-bold text-black text-md md:text-lg lg:text-lg">{assetDetails?.ID}</span>
+            <span className="font-bold text-black text-md md:text-lg lg:text-lg">
+              {assetDetails?.ID}
+            </span>
           </div>
           <div></div>
         </div>
@@ -262,17 +296,20 @@ export default function CatchDetailsPage() {
 
         <div className="mx-auto max-w-5xl px-4 h-16 flex items-center justify-evenly">
           <div />
-          {!isDetailsSaved && canEditAndSave() && (
+          {canEditAndSave() && (
             <>
-              <SaveAlert onSave={handleSaveDetails} />
-              <SendAlert />
-            </>
-          )}
+              {!isDetailsSaved && (
+                <>
+                  <SaveAlert onSave={handleSaveDetails} />
+                </>
+              )}
 
-          {isDetailsSaved && canEditAndSave() && (
-            <Button variant="outline" onClick={handleOpenSendCard}>
-              Send Tuna
-            </Button>
+              {isDetailsSaved && (
+                <Button variant="outline" onClick={handleOpenSendCard}>
+                  Send Tuna
+                </Button>
+              )}
+            </>
           )}
           <div />
         </div>
