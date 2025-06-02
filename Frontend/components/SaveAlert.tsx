@@ -11,29 +11,32 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
-const SaveAlert = ({ onSave }: { onSave: () => void }) => {
+interface SaveAlertProps {
+  onSave: () => void;
+}
+
+export default function SaveAlert({ onSave }: SaveAlertProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button>Save</Button>
+        <Button 
+          className="bg-[#357C87] text-white hover:bg-white hover:text-[#429FAD] transition-colors duration-200"
+        >
+          Save
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. Once you save, the contents written
-            will be permanently added to the asset.
+          <AlertDialogTitle>Save Catch Details?</AlertDialogTitle>
+          <AlertDialogDescription className="text-base">
+            Pagkatapos mo pindot ang Save, indi mo na pwede maislan ang mga datos.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          {/* Insert Cancel Action */}
-          <AlertDialogCancel>Edit</AlertDialogCancel>
-          {/* Insert Save Action */}
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={onSave}>Save</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
-};
-
-export default SaveAlert;
+}

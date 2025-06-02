@@ -8,9 +8,10 @@ import SearchableDropdown from './ui/SearchableDropdown';
 
 type AssetDetail = {
   label: string;
-  displayLabel: string; // Add this new property
+  displayLabel: string;
   value: string | ReactNode | ReactNode[];
   readOnly?: boolean;
+  type?: string; 
 };
 
 type CatchDetailsTableProps = {

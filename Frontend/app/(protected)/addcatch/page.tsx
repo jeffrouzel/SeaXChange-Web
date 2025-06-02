@@ -57,7 +57,7 @@ export default function NewCatchPage() {
     ID: "",
     Species: "",
     CatchLocation: "",
-    CatchDate: "",
+    CatchDate: new Date().toISOString().split('T')[0], // Set default to today's date in YYYY-MM-DD format
     FishingMethod: "",
     Fisher: "",
     Supplier: "",
@@ -197,7 +197,8 @@ export default function NewCatchPage() {
                 { 
                   label: "Catch Date", 
                   displayLabel: labelTranslations["Catch Date"],
-                  value: newAsset.CatchDate || "Select Date" 
+                  value: newAsset.CatchDate || new Date().toISOString().split('T')[0],
+                  type: "date" // Add this to specify input type
                 },
                 { 
                   label: "Fishing Method", 
@@ -244,10 +245,11 @@ export default function NewCatchPage() {
             <SaveAlert
               onSave={handleSaveDetails}
             />
-          ) : null}
-          {!isDetailsSaved ? <SendAlert /> : null}
-          {isDetailsSaved && (
-            <Button variant="outline" onClick={handleOpenSendCard}>
+          ) : (
+            <Button  className="bg-[#357C87] text-white hover:bg-white hover:text-[#429FAD] transition-colors duration-200"
+              variant="outline" 
+              onClick={handleOpenSendCard}
+            >
               Send Tuna
             </Button>
           )}

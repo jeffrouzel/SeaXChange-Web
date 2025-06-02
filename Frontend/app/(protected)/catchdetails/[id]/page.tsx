@@ -337,17 +337,27 @@ export default function CatchDetailsPage() {
           <div />
           {canEditAndSave() && (
             <>
-              {!isDetailsSaved && (
+              {/* {!isDetailsSaved && (
                 <>
                   <SaveAlert onSave={handleSaveDetails} />
                 </>
               )}
 
               {isDetailsSaved && (
-                <Button variant="outline" onClick={handleOpenSendCard}>
+                <Button 
+                className="bg-[#357C87] text-white hover:bg-white hover:text-[#429FAD] transition-colors duration-200"
+                // variant="outline" 
+                onClick={handleOpenSendCard}>
                   Send Tuna
                 </Button>
-              )}
+              )} */
+              <Button 
+                className="bg-[#357C87] text-white hover:bg-white hover:text-[#429FAD] transition-colors duration-200"
+                // variant="outline" 
+                onClick={handleOpenSendCard}>
+                  Send Tuna
+                </Button>
+              }
             </>
           )}
           <div />

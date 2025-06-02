@@ -91,11 +91,14 @@ export default function FisherHomepage() {
     <div className="min-h-screen bg-gradient-to-b from-[#429FAD] via-[#57acb9] to-[#6fc0cc] p-6">
       <HomepageHeader title="Fisher's Homepage" />
 
-      <div className="flex justify-center my-6 gap-4">
-        <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
+      <div className="flex flex-col md:flex-row justify-center items-center md:space-x-2 space-y-2 md:space-y-0 my-6">
+        {/* Search bar container */}
+        <div className="w-half max-w-md">
+          <SearchBar placeholder="Enter Tuna ID" onSearch={setSearchQuery} />
+        </div>
         
         {/* Add Sort Button */}
-        <div className="relative">
+        <div className="relative w-[150px">
           <button
             onClick={() => setShowSortOptions(!showSortOptions)}
             className="bg-white text-teal-700 px-4 py-2 flex items-center gap-2 rounded-lg shadow hover:bg-teal-100"
