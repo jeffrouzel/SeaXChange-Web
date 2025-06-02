@@ -60,7 +60,7 @@ export default function Login() {
           router.push("/auth/signup-roles");
         }, 2000);
       } else if (err.code === "auth/invalid-credential") {
-        setError("Incorrect password. Please try again.");
+        setError("Incorrect email or password. Please try again.");
       } else if (err.code === "auth/invalid-email") {
         setError("Invalid email format.");
       } else if (err.code === "auth/too-many-requests") {
