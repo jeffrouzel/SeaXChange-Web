@@ -13,7 +13,7 @@ import { getEditableFieldsForRole } from "@/lib/editableFieldsByRole";
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase.config";
-import { createAsset } from "@/lib/api"; // Adjust the import path as necessary
+import { createAsset, getHighestTunaId } from "@/lib/api"; // Adjust the import path as necessary
 
 export default function NewCatchPage() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function NewCatchPage() {
     ID: "",
     Species: "",
     CatchLocation: "",
-    CatchDate: "",
+    CatchDate: new Date().toISOString().split('T')[0], // Set default to today's date in YYYY-MM-DD format
     FishingMethod: "",
     Fisher: "",
     Supplier: "",
@@ -113,6 +113,38 @@ export default function NewCatchPage() {
     setFisherDetails();
   }, []);
 
+  // Add this useEffect to set the initial ID
+  useEffect(() => {
+    const generateTunaId = async () => {
+      try {
+        const highestId = await getHighestTunaId();
+        const newId = `tuna${highestId + 1}`;
+        setNewAsset(prev => ({
+          ...prev,
+          ID: newId
+        }));
+      } catch (error) {
+        console.error('Error generating tuna ID:', error);
+      }
+    };
+
+    generateTunaId();
+  }, []);
+
+  const labelTranslations: { [key: string]: string } = {
+    "ID": "ID",
+    "Species": "Klase sang Isda (Species)",
+    "Catch Location": "Lugar kung Diin Gindakop (Catch Location)",
+    "Catch Date": "Petsa sang Pagdakop (Catch Date)",
+    "Fishing Method": "Pama agi sang Pangisda (Fishing Method)",
+    "Fisher": "Fisher",
+    "Supplier": "Supplier",
+    "Supplier Location": "Supplier Location",
+    "Retailer": "Vendor (Retailer)",
+    "Retailer Location": "Retailer Location",
+    "Consumer": "Customer (Consumer)",
+  };
+
   const formattedDetails = [
     { label: "ID", key: "ID", placeholder: "Enter ID", value: newAsset.ID },
     { label: "Species", key: "Species", placeholder: "Set Species", value: newAsset.Species },
@@ -146,19 +178,56 @@ export default function NewCatchPage() {
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <CatchDetailsTable
               assetDetails={[
-                { label: "ID", value: newAsset.ID || "Enter ID" },
-                { label: "Klase sang Isda (Species)", value: newAsset.Species || "Set Species" },
-                { label: "Lugar kung Diin Gindakop (Catch Location)", value: newAsset.CatchLocation || "Enter Location" },
-                { label: "Petsa sang Pagdakop (Catch Date)", value: newAsset.CatchDate || "Select Date" },
-                { label: "Pama agi sang Pangisda (Fishing Method)", value: newAsset.FishingMethod || "Describe Method" },
-                { label: "Fisher", value: newAsset.Fisher || "Loading...", readOnly: true }, // Added readOnly
-                { label: "Supplier", value: "NA" },
-                { label: "Supplier Location", value: "NA" },
-                { label: "Vendor (Retailer)", value: "NA" },
-                { label: "Retailer Location", value: "NA" },
-                { label: "Customer (Consumer)", value: "NA" },
+                { 
+                  label: "ID", 
+                  displayLabel: labelTranslations["ID"],
+                  value: newAsset.ID || "Generating ID...",
+                  readOnly: true  // Add this line
+                },
+                { 
+                  label: "Species", 
+                  displayLabel: labelTranslations["Species"],
+                  value: newAsset.Species || "Set Species" 
+                },
+                { 
+                  label: "Catch Location", 
+                  displayLabel: labelTranslations["Catch Location"],
+                  value: newAsset.CatchLocation || "Enter Location" 
+                },
+                { 
+                  label: "Catch Date", 
+                  displayLabel: labelTranslations["Catch Date"],
+                  value: newAsset.CatchDate || new Date().toISOString().split('T')[0],
+                  type: "date" // Add this to specify input type
+                },
+                { 
+                  label: "Fishing Method", 
+                  displayLabel: labelTranslations["Fishing Method"],
+                  value: newAsset.FishingMethod || "Describe Method" 
+                },
+                { 
+                  label: "Fisher", 
+                  displayLabel: labelTranslations["Fisher"],
+                  value: newAsset.Fisher || "Loading...", 
+                  readOnly: true 
+                },
+                { label: "Supplier", 
+                  displayLabel: labelTranslations["Supplier"], 
+                  value: "NA" },
+                { label: "Supplier Location", 
+                  displayLabel: labelTranslations["Supplier Location"],
+                  value: "NA" },
+                { label: "Vendor (Retailer)", 
+                  displayLabel: labelTranslations["Retailer"],
+                  value: "NA" },
+                { label: "Retailer Location", 
+                  displayLabel: labelTranslations["Retailer Location"],
+                  value: "NA" },
+                { label: "Customer (Consumer)", 
+                  displayLabel: labelTranslations["Consumer"],
+                  value: "NA" },
               ]}
-              editableFields={["ID", "Species", "Catch Location", "Catch Date", "Fishing Method"]} // Removed Fisher
+              editableFields={["Species", "Catch Location", "Catch Date", "Fishing Method"]} // Remove ID from editable fields
               onChange={(updates) =>
                 setNewAsset((prevAsset) => ({
                   ...prevAsset,
@@ -176,10 +245,11 @@ export default function NewCatchPage() {
             <SaveAlert
               onSave={handleSaveDetails}
             />
-          ) : null}
-          {!isDetailsSaved ? <SendAlert /> : null}
-          {isDetailsSaved && (
-            <Button variant="outline" onClick={handleOpenSendCard}>
+          ) : (
+            <Button  className="bg-[#357C87] text-white hover:bg-white hover:text-[#429FAD] transition-colors duration-200"
+              variant="outline" 
+              onClick={handleOpenSendCard}
+            >
               Send Tuna
             </Button>
           )}
