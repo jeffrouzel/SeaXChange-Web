@@ -84,7 +84,7 @@ export default function SupplierHomepage() {
 
    return (
     <div className="min-h-screen bg-gradient-to-b from-[#429FAD] via-[#57acb9] to-[#6fc0cc] p-6">
-      <HomepageHeader title="Retailer's Homepage" />
+      <HomepageHeader title="Supplier's Homepage" />
 
       <div className="flex flex-col md:flex-row justify-center items-center md:space-x-2 space-y-2 md:space-y-0 my-6">  {/* Changed space-x-4 to space-x-2 */}
         {/* Search bar container */}
