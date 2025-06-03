@@ -122,7 +122,7 @@ export default function RetailerHomepage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTunaData.map((tuna) => (
-          <Link href={`/viewdetails/${tuna.ID}`} key={tuna.ID}>
+          <Link href={`/catchdetails/${tuna.ID}`} key={tuna.ID}>
             <TunaCard
               id={tuna.ID}
               date={new Date(tuna.CatchDate).toLocaleDateString()}
